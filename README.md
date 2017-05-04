@@ -1,3 +1,36 @@
+# Cordova Plugin: HYKER RIKS
+
+## How To Use In Project
+
+    npm install -g cordova
+    npm install -g taco-cli
+
+    cordova create myprj
+    git clone git@github.com:hykersec/cordova-plugin-hyker-riks.git
+
+    cd myprj
+
+    cordova platform add ios
+    cordova platform add android@6.2.2
+
+    *may need to apply patch*
+
+    cordova plugin remove io.hyker.riks
+    cordova plugin add ../cordova-plugin-hyker-riks
+    taco run android --livereload
+
+
+    PATCH:
+
+    platforms/android/cordova/lib/emulator.js
+      return superspawn.spawn('android', ['list', 'avd'])
+      ->
+      return superspawn.spawn('android', ['list', 'avds’])
+
+    chmod +x /Applications/Android\ Studio\ 2.4\ Preview.app/Contents/gradle/gradle-3.4.1/bin/gradle
+
+
+---
 # Cordova Hello World Plugin
 
 Simple plugin that returns your string prefixed with hello.
