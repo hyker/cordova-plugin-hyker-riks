@@ -5,6 +5,12 @@
 
   <name>HYKER RIKS</name>
 
+  <description>
+    A plugin integrating HYKER RIKS capabilities.
+  </description>
+
+  <dependency id="cordova-plugin-cocoapod-support"/>
+
   <engines>
     <engine name="cordova" version=">=6.5.0"/>
   </engines>
@@ -28,14 +34,18 @@
 
   <platform name="ios">
 
-    <config-file target="config.xml" parent="/widget">
+    <config-file target="config.xml" parent="/*">
       <feature name="RiksKit">
         <param name="ios-package" value="RiksKit" />
       </feature>
     </config-file>
 
-    <header-file src="src/ios/RiksKit.h" target-dir="RiksPlugin"/>
-    <source-file src="src/ios/RiksKit.m" target-dir="RiksPlugin"/>
+    <source-file src="src/ios/RiksKit.swift"/>
+        <pods-config ios-min-version="8.0" use-frameworks="true">
+            <!-- optionally add private spec sources -->
+            <!--<source url="git@github.com:foo/foo-specs.git"/>-->
+        </pods-config>
+        <pod name="OpenSSL" version="~> 1.0.2" />
   </platform>
 
 </plugin>

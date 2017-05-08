@@ -5,8 +5,9 @@
     npm install -g cordova
     npm install -g taco-cli
 
-    cordova create myprj
     git clone git@github.com:hykersec/cordova-plugin-hyker-riks.git
+
+    cordova create myprj com.example.myprj MyPrj
 
     cd myprj
 
@@ -15,20 +16,27 @@
 
     *may need to apply patch*
 
+    cordova plugin add cordova-plugin-add-swift-support --save
+    #cordova plugin add cordova-plugin-cocoapod-support --save
+
     cordova plugin remove io.hyker.riks
     cordova plugin add ../cordova-plugin-hyker-riks
-    taco run android --livereload
 
+    open platforms/ios/HelloCordova.xcworkspace
+      * COPY RiksKitiOS.framework and libriks.so to MyPrj root *
+      HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]
+
+    cordova ios run
+    #taco run android --livereload
 
     PATCH:
 
     platforms/android/cordova/lib/emulator.js
       return superspawn.spawn('android', ['list', 'avd'])
-      ->
+        ->
       return superspawn.spawn('android', ['list', 'avds’])
 
     chmod +x /Applications/Android\ Studio\ 2.4\ Preview.app/Contents/gradle/gradle-3.4.1/bin/gradle
-
 
 ---
 # Cordova Hello World Plugin

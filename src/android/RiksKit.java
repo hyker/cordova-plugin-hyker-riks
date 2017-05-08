@@ -18,9 +18,7 @@ public class RiksKit extends CordovaPlugin {
             return true;
 
         } else {
-            
             return false;
-
         }
     }
 }
