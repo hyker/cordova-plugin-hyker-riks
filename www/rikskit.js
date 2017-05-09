@@ -22,6 +22,13 @@ function RiksKit(deviceId, configPath, password, successCallback, errorCallback)
     
 }
 
+RiksKit.prototype.encrypt = function (message, topic, successCallback, errorCallback){
+    
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "encrypt", [message,topic]);
+
+}
+
+
 RiksKit.prototype.a = function (a1, a2) {
     aConf = a1 + this.configPath;
     return aConf;

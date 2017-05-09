@@ -35,25 +35,30 @@ public class CordovaRiksKit extends CordovaPlugin {
             //    } else {
                     isInit = true;
                     //riksKit = initRiks(data);
-		    String concat = "";
 		    try {
-                        concat = initRiks(data);
+                        initRiks(data);
                     } catch (IOException e) {
                         callbackContext.error(" Error: " + e.getMessage());
+			return true;
                     }
-                    callbackContext.success("mock object intitialized: " + concat);
+                    callbackContext.success("riks intitialized");
                     return true;
              //   }
 
 
-            case "greet":
+            case "encrypt":
 
-                String name = data.getString(0);
-                String message = "Hello!, " + name + "!";
-                callbackContext.success(message);
+		String encrypted = null;
 
+        	try {
+                    encrypted = encrypt(data);
+                } catch (IOException e) {
+                    callbackContext.error(" Error: " + e.getMessage());
+		    return true;
+                }
+
+                callbackContext.success(encrypted);
                 return true;
-
 
             default:
 
@@ -64,7 +69,25 @@ public class CordovaRiksKit extends CordovaPlugin {
 
     }
 
-    private String initRiks(JSONArray data) throws JSONException, IOException {
+    private String encrypt(JSONArray data) throws JSONException, IOException {
+
+        String message = data.getString(0);
+        String topic = data.getString(1);
+
+	String encrypted = null;
+        try {
+
+	    Message m = new Message().secret(message);
+            encrypted = riksKit.encryptMessage(m, topic);
+
+        } catch (SymKeyExpiredException | CryptoException e) {
+	    throw new IOException(e.getMessage());
+        }
+	
+	return encrypted;
+    }
+
+    private void initRiks(JSONArray data) throws JSONException, IOException {
 
         Context context = this.cordova.getActivity().getApplicationContext(); 
 
@@ -88,7 +111,8 @@ public class CordovaRiksKit extends CordovaPlugin {
 	    throw new IOException(e.getMessage());
         }
         //return deviceId + configPath + password;
-        return testPassword;
+        //return testPassword;
+	return;
 
     }
 
