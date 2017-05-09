@@ -20,8 +20,17 @@ import java.util.Properties;
 
 public class CordovaRiksKit extends CordovaPlugin {
     
+
     private static boolean isInit = false;
     private static RiksKit riksKit = null;
+
+    private static synchronized void setInit(){
+	isInit = true;
+    }
+
+    private static synchronized boolean isInit(){
+	return isInit;
+    }
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -29,12 +38,11 @@ public class CordovaRiksKit extends CordovaPlugin {
         switch (action) {
             case "init":
 
-         //       if (isInit){
-          //          callbackContext.error("can not instantiate twice");
-           //         return true;
-            //    } else {
-                    isInit = true;
-                    //riksKit = initRiks(data);
+                if (isInit()){
+                    callbackContext.error("can not instantiate twice");
+                    return true;
+                } else {
+		    setInit();
 		    try {
                         initRiks(data);
                     } catch (IOException e) {
@@ -43,7 +51,7 @@ public class CordovaRiksKit extends CordovaPlugin {
                     }
                     callbackContext.success("riks intitialized");
                     return true;
-             //   }
+                }
 
 
             case "encrypt":
