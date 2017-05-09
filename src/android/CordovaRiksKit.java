@@ -21,7 +21,7 @@ import java.util.Properties;
 public class CordovaRiksKit extends CordovaPlugin {
     
     private static boolean isInit = false;
-    //private static RiksKit riksKit = null;
+    private static RiksKit riksKit = null;
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -81,6 +81,12 @@ public class CordovaRiksKit extends CordovaPlugin {
 	ps = new PropertyStore(properties);
 	String testPassword = ps.TRUST_STORE_PASSWORD;
 
+	try {
+            Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
+            riksKit = new RiksKit(deviceId, password, ps, storage, new Whitelist());
+        } catch (Exception e) {
+	    throw new IOException(e.getMessage());
+        }
         //return deviceId + configPath + password;
         return testPassword;
 
