@@ -1,6 +1,6 @@
 package io.hyker.plugin;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 
 import org.lukhnos.nnio.file.Files;
 import org.lukhnos.nnio.file.Paths;
@@ -37,7 +37,7 @@ public class AndroidStorage implements Storage {
     private final String workingDir;
     private final KeyStore trustStore;
 
-    public AndroidStorage(PropertyStore propertyStore, AppCompatActivity activity) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
+    public AndroidStorage(PropertyStore propertyStore, Activity activity) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
         this.propertyStore = propertyStore;
         this.workingDir = activity.getApplicationContext().getFilesDir().getAbsolutePath();// + File.separator + "lok";
 

@@ -11,6 +11,7 @@
 
   <!---  <dependency id="cordova-plugin-cocoapod-support"/> -->
 
+
   <engines>
     <engine name="cordova" version=">=6.5.0"/>
   </engines>
@@ -37,6 +38,7 @@
     <lib-file src="src/android/libs/prov-1.56.0.0.jar"/>
     <lib-file src="src/android/libs/riks-android-1.0.jar"/>
     <lib-file src="src/android/libs/crypto-client-java-android-1.0.jar"/>
+
   </platform>
 
   <platform name="ios">
