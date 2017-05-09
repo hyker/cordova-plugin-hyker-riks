@@ -32,9 +32,9 @@
     PATCH:
 
     platforms/android/cordova/lib/emulator.js
-      return superspawn.spawn('android', ['list', 'avd'])
+      return superspawn.spawn('android', ['list', 'avds'])
         ->
-      return superspawn.spawn('android', ['list', 'avds’])
+      return superspawn.spawn('android', ['list', 'avd’])
 
     chmod +x /Applications/Android\ Studio\ 2.4\ Preview.app/Contents/gradle/gradle-3.4.1/bin/gradle
 
