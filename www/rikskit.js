@@ -8,9 +8,16 @@ module.exports = {
 };
 */
 
-function RiksKit(configPath){
+function RiksKit(deviceId, password, configPath, successCallback, errorCallback){
 
     this.configPath = configPath;
+    this.password = password;
+    this.configPath = configPath;
+
+
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "init", [deviceId, password, configPath]);
+    //successCallback(configPath);
+
 
     
 }
