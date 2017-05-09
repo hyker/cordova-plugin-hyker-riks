@@ -9,7 +9,7 @@
     A plugin integrating HYKER RIKS capabilities.
   </description>
 
-  <dependency id="cordova-plugin-cocoapod-support"/>
+  <!---  <dependency id="cordova-plugin-cocoapod-support"/> -->
 
   <engines>
     <engine name="cordova" version=">=6.5.0"/>
@@ -30,6 +30,13 @@
     </config-file>
 
     <source-file src="src/android/RiksKit.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/AndroidStorage.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/Whitelist.java" target-dir="src/io/hyker/plugin/"/>
+    <lib-file src="src/android/libs/bcpkix-jdk15on-1.56.0.0.jar"/>
+    <lib-file src="src/android/libs/core-1.56.0.0.jar"/>
+    <lib-file src="src/android/libs/prov-1.56.0.0.jar"/>
+    <lib-file src="src/android/libs/riks-android-1.0.jar"/>
+    <lib-file src="src/android/libs/crypto-client-java-android-1.0.jar"/>
   </platform>
 
   <platform name="ios">
