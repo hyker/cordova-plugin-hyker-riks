@@ -1,10 +1,28 @@
 /*global cordova, module*/
 
+/*
 module.exports = {
     greet: function (name, successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "greet", [name]);
     }
 };
+*/
+
+function RiksKit(configPath){
+
+    this.configPath = configPath;
+
+    
+}
+
+RiksKit.prototype.a = function (a1, a2) {
+    aConf = a1 + this.configPath;
+    return aConf;
+}
+
+module.exports = RiksKit;
+
+
 
 /// RIKS KIT API SKELETON ///
 

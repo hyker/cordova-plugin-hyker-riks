@@ -18,8 +18,8 @@
 
   <asset src="www/rikskit.js" target="js/rikskit.js"/>
 
-  <js-module src="www/rikskit.js" name="rikskit">
-    <clobbers target="rikskit" />
+  <js-module src="www/rikskit.js" name="RiksKit">
+    <clobbers target="RiksKit" />
   </js-module>
 
   <platform name="android">
