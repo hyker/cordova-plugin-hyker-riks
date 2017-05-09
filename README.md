@@ -26,7 +26,7 @@
       * COPY RiksKitiOS.framework and libriks.so to MyPrj root *
       HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]
 
-    cordova ios run
+    cordova run ios
     #taco run android --livereload
 
     PATCH:
