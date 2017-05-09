@@ -25,12 +25,12 @@
   <platform name="android">
 
     <config-file target="res/xml/config.xml" parent="/*">
-      <feature name="RiksKit">
-        <param name="android-package" value="io.hyker.plugin.RiksKit"/>
+      <feature name="CordovaRiksKit">
+        <param name="android-package" value="io.hyker.plugin.CordovaRiksKit"/>
       </feature>
     </config-file>
 
-    <source-file src="src/android/RiksKit.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/CordovaRiksKit.java" target-dir="src/io/hyker/plugin/"/>
     <source-file src="src/android/AndroidStorage.java" target-dir="src/io/hyker/plugin/"/>
     <source-file src="src/android/Whitelist.java" target-dir="src/io/hyker/plugin/"/>
     <lib-file src="src/android/libs/bcpkix-jdk15on-1.56.0.0.jar"/>

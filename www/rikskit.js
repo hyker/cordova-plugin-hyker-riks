@@ -2,7 +2,7 @@
 
 module.exports = {
     greet: function (name, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "RiksKit", "greet", [name]);
+        cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "greet", [name]);
     }
 };
 
