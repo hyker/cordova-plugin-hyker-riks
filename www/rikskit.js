@@ -28,10 +28,10 @@ RiksKit.prototype.encrypt = function (message, topic, successCallback, errorCall
 
 }
 
+RiksKit.prototype.decrypt = function (message, successCallback, errorCallback){
+    
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "decrypt", [message]);
 
-RiksKit.prototype.a = function (a1, a2) {
-    aConf = a1 + this.configPath;
-    return aConf;
 }
 
 module.exports = RiksKit;

@@ -67,6 +67,21 @@ public class CordovaRiksKit extends CordovaPlugin {
 
                 callbackContext.success(encrypted);
                 return true;
+	    
+            case "decrypt":
+
+                String enc = data.getString(0);
+		riksKit.decryptMessageAsync(enc,  (m, e) -> {
+		    
+                    if (e != null){
+                        callbackContext.error("Decrypt error: " + e.getMessage());
+		    } else {
+            	        String decryptedMessage = m.secret;
+                        callbackContext.success(decryptedMessage);
+		    }
+                });
+
+                return true;
 
             default:
 
