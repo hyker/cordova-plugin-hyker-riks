@@ -32,7 +32,7 @@ public class CordovaRiksKit extends CordovaPlugin {
         switch (action) {
             case "init":
 
-		Log.d("ACTION", "action init");
+		Log.d("ACTION", "action encrypt");
 
                 if (riksKit.get() != null){
 
@@ -46,7 +46,9 @@ public class CordovaRiksKit extends CordovaPlugin {
                         initRiks(data);
 			synchronized (riksKit) {
 			    try {
-				riksKit.wait();
+				while (riksKit.get() == null){
+				    riksKit.wait();
+				}
 			    } catch (InterruptedException e) {
 				callbackContext.error(" Error: " + e.getMessage());
 				return true;
@@ -65,12 +67,24 @@ public class CordovaRiksKit extends CordovaPlugin {
 
             case "encrypt":
 
-		Log.d("ACTION", "antion encrypt");
+		Log.d("ACTION", "action encrypt");
 
 		String encrypted = null;
 
         	try {
+	            synchronized (riksKit) {
+			try {
+			    while (riksKit.get() == null){
+				riksKit.wait();
+			    }
+			} catch (InterruptedException e) {
+			    callbackContext.error(" Error: " + e.getMessage());
+			    return true;
+			}
+		    }
+
                     encrypted = encrypt(data);
+
                 } catch (IOException e) {
                     callbackContext.error(" Error: " + e.getMessage());
 		    return true;
@@ -81,9 +95,21 @@ public class CordovaRiksKit extends CordovaPlugin {
 	    
             case "decrypt":
 
-		Log.d("ACTION", "antion encrypt");
+		Log.d("ACTION", "action decrypt");
 
                 String enc = data.getString(0);
+
+	        synchronized (riksKit) {
+		    try {
+			while (riksKit.get() == null){
+			    riksKit.wait();
+			}
+		    } catch (InterruptedException e) {
+			callbackContext.error(" Error: " + e.getMessage());
+			return true;
+		    }
+		}
+
 		riksKit.get().decryptMessageAsync(enc,  (m, e) -> {
 		    
                     if (e != null){
@@ -146,6 +172,7 @@ public class CordovaRiksKit extends CordovaPlugin {
             RiksKit rk = new RiksKit(deviceId, password, ps, storage, new Whitelist());
 
 	    synchronized(riksKit){
+
 	        riksKit.set(rk);
 	        riksKit.notifyAll();
 	    }
