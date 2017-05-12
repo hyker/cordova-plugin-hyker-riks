@@ -5,7 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import java.io.IOException;
 import android.content.Context;
-
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.hyker.cryptobox.PropertyStore;
 import io.hyker.cryptobox.Storage;
@@ -17,20 +17,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Security;
 import java.util.Properties;
+import android.util.Log;
 
 public class CordovaRiksKit extends CordovaPlugin {
     
 
-    private static boolean isInit = false;
-    private static RiksKit riksKit = null;
+    //private static RiksKit riksKit = null;
 
-    private static synchronized void setInit(){
-	isInit = true;
-    }
-
-    private static synchronized boolean isInit(){
-	return isInit;
-    }
+    private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -38,23 +32,40 @@ public class CordovaRiksKit extends CordovaPlugin {
         switch (action) {
             case "init":
 
-                if (isInit()){
+		Log.d("ACTION", "action init");
+
+                if (riksKit.get() != null){
+
                     callbackContext.error("can not instantiate twice");
                     return true;
+
                 } else {
-		    setInit();
+
 		    try {
+
                         initRiks(data);
+			synchronized (riksKit) {
+			    try {
+				riksKit.wait();
+			    } catch (InterruptedException e) {
+				callbackContext.error(" Error: " + e.getMessage());
+				return true;
+			    }
+			}
+
                     } catch (IOException e) {
                         callbackContext.error(" Error: " + e.getMessage());
 			return true;
                     }
+
                     callbackContext.success("riks intitialized");
                     return true;
                 }
 
 
             case "encrypt":
+
+		Log.d("ACTION", "antion encrypt");
 
 		String encrypted = null;
 
@@ -70,8 +81,10 @@ public class CordovaRiksKit extends CordovaPlugin {
 	    
             case "decrypt":
 
+		Log.d("ACTION", "antion encrypt");
+
                 String enc = data.getString(0);
-		riksKit.decryptMessageAsync(enc,  (m, e) -> {
+		riksKit.get().decryptMessageAsync(enc,  (m, e) -> {
 		    
                     if (e != null){
                         callbackContext.error("Decrypt error: " + e.getMessage());
@@ -101,7 +114,7 @@ public class CordovaRiksKit extends CordovaPlugin {
         try {
 
 	    Message m = new Message().secret(message);
-            encrypted = riksKit.encryptMessage(m, topic);
+            encrypted = riksKit.get().encryptMessage(m, topic);
 
         } catch (SymKeyExpiredException | CryptoException e) {
 	    throw new IOException(e.getMessage());
@@ -128,13 +141,18 @@ public class CordovaRiksKit extends CordovaPlugin {
 	String testPassword = ps.TRUST_STORE_PASSWORD;
 
 	try {
+
             Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
-            riksKit = new RiksKit(deviceId, password, ps, storage, new Whitelist());
+            RiksKit rk = new RiksKit(deviceId, password, ps, storage, new Whitelist());
+
+	    synchronized(riksKit){
+	        riksKit.set(rk);
+	        riksKit.notifyAll();
+	    }
+
         } catch (Exception e) {
 	    throw new IOException(e.getMessage());
         }
-        //return deviceId + configPath + password;
-        //return testPassword;
 	return;
 
     }
