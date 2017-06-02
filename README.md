@@ -22,7 +22,7 @@
     cordova plugin remove io.hyker.riks
     cordova plugin add ../cordova-plugin-hyker-riks
 
-    open platforms/ios/HelloCordova.xcworkspace
+    open platforms/ios/MyPrj.xcworkspace
       * COPY RiksKitiOS.framework and libriks.so to MyPrj root *
       HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]
 
