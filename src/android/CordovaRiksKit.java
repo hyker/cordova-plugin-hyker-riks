@@ -110,13 +110,16 @@ public class CordovaRiksKit extends CordovaPlugin {
 		    }
 		}
 
-		riksKit.get().decryptMessageAsync(enc,  (m, e) -> {
+		riksKit.get().decryptMessageAsync(enc, new RiksKit.DecryptionCallback() {
+                    @Override
+                    public void callback(Message m, Exception e) {
 		    
-                    if (e != null){
-                        callbackContext.error("Decrypt error: " + e.getMessage());
-		    } else {
-            	        String decryptedMessage = m.secret;
-                        callbackContext.success(decryptedMessage);
+			if (e != null){
+                    	    callbackContext.error("Decrypt error: " + e.getMessage());
+		    	} else {
+            	    	    String decryptedMessage = m.secret;
+                    	    callbackContext.success(decryptedMessage);
+		    	}
 		    }
                 });
 

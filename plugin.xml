@@ -14,6 +14,8 @@
 
   <engines>
     <engine name="cordova" version=">=6.5.0"/>
+    <engine name="cordova-android" version=">=6.2.2" />
+    <engine name="cordova-ios" version=">=1.7.1" />
   </engines>
 
   <asset src="www/rikskit.js" target="js/rikskit.js"/>
