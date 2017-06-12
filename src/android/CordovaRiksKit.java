@@ -51,7 +51,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 				    riksKit.wait();
 				}
 			    } catch (InterruptedException e) {
-				callbackContext.error(" Error: " + e.getMessage());
+				callbackContext.error("Error: " + e.getMessage());
 				return true;
 			    }
 			}
