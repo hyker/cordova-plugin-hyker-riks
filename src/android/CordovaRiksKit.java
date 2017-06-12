@@ -171,54 +171,34 @@ public class CordovaRiksKit extends CordovaPlugin {
 
     private void initRiks(JSONArray data) throws JSONException, IOException {
 
-	Log.d("ACTION", "action riks new 1");
         Context context = this.cordova.getActivity().getApplicationContext(); 
 
-	Log.d("ACTION", "action riks new 2");
-	//these are correct
         String deviceId = data.getString(0);
         String configPath = data.getString(1);
         String password = data.getString(2);
 
-	Log.d("ACTION", "action riks new 3");
 
 	PropertyStore ps = null;
-	Log.d("ACTION", "action riks new 4");
 	InputStream is = null;
-	Log.d("ACTION", "action riks new 5");
 	is = context.getAssets().open(configPath);
-	Log.d("ACTION", "action riks new 6");
 	Properties properties = new Properties();
-	Log.d("ACTION", "action riks new 7");
 	properties.load(is);
-	Log.d("ACTION", "action riks new 8");
 	ps = new PropertyStore(properties);
-	Log.d("ACTION", "action riks new 9");
 	String testPassword = ps.TRUST_STORE_PASSWORD;
 
-	Log.d("ACTION", "action riks new 10");
 	try {
-
-	Log.d("ACTION", "action riks new 11");
             Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
-	Log.d("ACTION", "action riks new 12");
             RiksKit rk = new RiksKit(deviceId, password, ps, storage, new Whitelist());
-	Log.d("ACTION", "action riks new 13");
 
 	    synchronized(riksKit){
-	Log.d("ACTION", "action riks new 14");
 
 	        riksKit.set(rk);
-	Log.d("ACTION", "action riks new 15");
 	        riksKit.notifyAll();
-	Log.d("ACTION", "action riks new 16");
 	    }
 
         } catch (Exception e) {
-	Log.d("ACTION", "action riks new 17");
 	    throw new IOException(e.getMessage());
         }
-	Log.d("ACTION", "action riks new 18");
 	return;
 
     }
