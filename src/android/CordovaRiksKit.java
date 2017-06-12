@@ -32,29 +32,23 @@ public class CordovaRiksKit extends CordovaPlugin {
         switch (action) {
             case "init":
 
-		Log.d("ACTION", "action init1");
+		Log.d("ACTION", "action init");
 
                 if (riksKit.get() != null){
 
-		Log.d("ACTION", "action init2");
                     callbackContext.error("can not instantiate twice");
 
-		    Log.d("ACTION", "action init3");
                     return true;
 
                 } else {
 
 		    try {
 
-		Log.d("ACTION", "action init4");
                         initRiks(data);
-		Log.d("ACTION", "action init5");
 			synchronized (riksKit) {
 			    try {
 				while (riksKit.get() == null){
-				    Log.d("ACTION", "witing 1");
 				    riksKit.wait();
-				    Log.d("ACTION", "witing 2");
 				}
 			    } catch (InterruptedException e) {
 				callbackContext.error(" Error: " + e.getMessage());
@@ -64,7 +58,6 @@ public class CordovaRiksKit extends CordovaPlugin {
 
                     } catch (IOException e) {
 
-		Log.d("ACTION", "action init EXCEPTION: " + e.getMessage());
                         callbackContext.error(" Error: " + e.getMessage());
 			return true;
                     }
@@ -133,6 +126,21 @@ public class CordovaRiksKit extends CordovaPlugin {
                 });
 
                 return true;
+
+            case "preshare":
+
+		Log.d("ACTION", "action preshare");
+		return true;
+
+            case "rekey":
+
+		Log.d("ACTION", "action rekey");
+		return true;
+
+            case "reset":
+
+		Log.d("ACTION", "action reset");
+		return true;
 
             default:
 

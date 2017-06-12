@@ -1,13 +1,5 @@
 /*global cordova, module*/
 
-/*
-module.exports = {
-    greet: function (name, successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "greet", [name]);
-    }
-};
-*/
-
 function RiksKit(deviceId, configPath, password, successCallback, errorCallback){
 
     this.deviceId = deviceId;
@@ -32,6 +24,25 @@ RiksKit.prototype.decrypt = function (message, successCallback, errorCallback){
     
     cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "decrypt", [message]);
 
+}
+
+RiksKit.prototype.preshareKey = function (recipientUID, keyID, successCallback, errorCallback){
+
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "preshare", [recipientUID, keyID]);
+
+}
+
+RiksKit.prototype.rekey = function (namespace, successCallback, errorCallback){
+    
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "rekey", [namespace]);
+
+}
+
+
+
+RiksKit.prototype.resetReplayProtector = function (successCallback, errorCallback){
+
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "reset", null);
 }
 
 module.exports = RiksKit;
