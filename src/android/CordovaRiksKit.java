@@ -130,16 +130,40 @@ public class CordovaRiksKit extends CordovaPlugin {
             case "preshare":
 
 		Log.d("ACTION", "action preshare");
+
+                String recipient = data.getString(0);
+                String keyId = data.getString(1);
+
+		try {
+		    riksKit.get().preShareKey(recipient, keyId);
+		} catch (Exception e) {
+                    callbackContext.error("Keyshare error: " + e.getMessage());
+		}
+
+                callbackContext.success("preshare successful");
+
 		return true;
 
             case "rekey":
 
 		Log.d("ACTION", "action rekey");
+		riksKit.get().rekey(data.getString(0));
+                callbackContext.success("rekey successful");
 		return true;
 
             case "reset":
 
 		Log.d("ACTION", "action reset");
+		riksKit.get().rekey(data.getString(0));
+                callbackContext.success("reset successful");
+	
+		return true;
+
+            case "resetall":
+
+		Log.d("ACTION", "action reset all");
+		riksKit.get().resetReplayProtector();
+                callbackContext.success("reset all successful");
 		return true;
 
             default:

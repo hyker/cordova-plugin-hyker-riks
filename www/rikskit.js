@@ -40,9 +40,14 @@ RiksKit.prototype.rekey = function (namespace, successCallback, errorCallback){
 
 
 
-RiksKit.prototype.resetReplayProtector = function (successCallback, errorCallback){
+RiksKit.prototype.resetReplayProtector = function (namespace, successCallback, errorCallback){
 
-    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "reset", null);
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "reset", [namespace]);
+}
+
+RiksKit.prototype.resetAllReplayProtectors = function (successCallback, errorCallback){
+
+    cordova.exec(successCallback, errorCallback, "CordovaRiksKit", "resetall", null);
 }
 
 module.exports = RiksKit;
