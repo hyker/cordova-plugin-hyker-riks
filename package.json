@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-hyker-riks",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "\n    A plugin integrating HYKER RIKS capabilities.\n  ",
   "cordova": {
     "id": "io.hyker.riks",
