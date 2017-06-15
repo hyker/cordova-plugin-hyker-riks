@@ -22,9 +22,6 @@ import android.util.Log;
 
 public class CordovaRiksKit extends CordovaPlugin {
     
-
-    //private static RiksKit riksKit = null;
-
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
     private CallbackContext longTermCallback;
 
@@ -223,41 +220,33 @@ public class CordovaRiksKit extends CordovaPlugin {
 	try {
             Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
 
+	    Log.d("ADAPTER", "1");
 	    AsynchronousWhitelistAdapter.NewKey newKey = new AsynchronousWhitelistAdapter.NewKey() {
 
 		@Override
-		boolean newKey(String keyId) {
-		    return true;
+		public void newKey(String keyId) {
+		    
+	    Log.d("ADAPTER", "newKey");
 		}
 
-	    }
+	    };
 
+	    Log.d("ADAPTER", "2");
 	    AsynchronousWhitelistAdapter.AllowedForKey allowedForKey = new AsynchronousWhitelistAdapter.AllowedForKey() {
 
 		@Override
-		void allowedForKey(String uid, String namespace, String keyId, Callback callback) {
-		    return true;
+		public void allowedForKey(String uid, String namespace, String keyId, AsynchronousWhitelistAdapter.Callback callback) {
+	    Log.d("ADAPTER", "allowdeForKey");
+		    callback.callback(true);
+	    Log.d("ADAPTER", "allowdeForKey2");
+		    //return true;
 		}
-	    }
+	    };
 
+	    Log.d("ADAPTER", "3");
             RiksKit rk = new RiksKit(deviceId, password, ps, storage, new AsynchronousWhitelistAdapter(allowedForKey, newKey));
 
 
-/*
-new RiksWhitelist() {
-	    
-	        @Override
-	        public boolean allowedForKey(String uid, String namespace, String keyId) {
-	            return true;
-	        }
-	    
-	        @Override
-	        public void newKey(String s) {
-	    
-	        }
-	    });
-
-*/
 	    synchronized(riksKit){
 
 	        riksKit.set(rk);
