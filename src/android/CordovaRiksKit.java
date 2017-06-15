@@ -1,6 +1,7 @@
 package io.hyker.plugin;
 
 import io.hyker.riks.box.AsynchronousWhitelistAdapter;
+import io.hyker.riks.box.RiksWhitelist;
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,7 @@ public class CordovaRiksKit extends CordovaPlugin {
     
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
     private CallbackContext longTermCallback;
+    private static final String MSG_INIT = "INIT";
 
     private void sendCallbackAndKeepRef(String message) {
 	
@@ -69,7 +71,7 @@ public class CordovaRiksKit extends CordovaPlugin {
                     }
 
 		    this.longTermCallback = callbackContext;
-		    sendCallbackAndKeepRef("initialized");
+		    sendCallbackAndKeepRef(MSG_INIT);
                     return true;
                 }
 
@@ -158,6 +160,7 @@ public class CordovaRiksKit extends CordovaPlugin {
                 callbackContext.success("rekey successful");
 		return true;
 
+/*
             case "reset":
 
 		Log.d("ACTION", "action reset");
@@ -166,6 +169,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 	
 		return true;
 
+*/
             case "resetall":
 
 		Log.d("ACTION", "action reset all");
@@ -220,31 +224,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 	try {
             Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
 
-	    Log.d("ADAPTER", "1");
-	    AsynchronousWhitelistAdapter.NewKey newKey = new AsynchronousWhitelistAdapter.NewKey() {
-
-		@Override
-		public void newKey(String keyId) {
-		    
-	    Log.d("ADAPTER", "newKey");
-		}
-
-	    };
-
-	    Log.d("ADAPTER", "2");
-	    AsynchronousWhitelistAdapter.AllowedForKey allowedForKey = new AsynchronousWhitelistAdapter.AllowedForKey() {
-
-		@Override
-		public void allowedForKey(String uid, String namespace, String keyId, AsynchronousWhitelistAdapter.Callback callback) {
-	    Log.d("ADAPTER", "allowdeForKey");
-		    callback.callback(true);
-	    Log.d("ADAPTER", "allowdeForKey2");
-		    //return true;
-		}
-	    };
-
-	    Log.d("ADAPTER", "3");
-            RiksKit rk = new RiksKit(deviceId, password, ps, storage, new AsynchronousWhitelistAdapter(allowedForKey, newKey));
+            RiksKit rk = new RiksKit(deviceId, password, ps, storage, setupWhitelist());
 
 
 	    synchronized(riksKit){
@@ -259,6 +239,31 @@ public class CordovaRiksKit extends CordovaPlugin {
 	return;
 
     }
+
+    private RiksWhitelist setupWhitelist(){
+        AsynchronousWhitelistAdapter.NewKey newKey = new AsynchronousWhitelistAdapter.NewKey() {
+    
+            @Override
+            public void newKey(String keyId) {
+        	    
+            }
+    
+        };
+    
+        AsynchronousWhitelistAdapter.AllowedForKey allowedForKey = new AsynchronousWhitelistAdapter.AllowedForKey() {
+    
+	   @Override
+	   public void allowedForKey(String uid, String namespace, String keyId, AsynchronousWhitelistAdapter.Callback callback) {
+	    callback.callback(true);
+	   }
+        };
+
+
+	return new AsynchronousWhitelistAdapter(allowedForKey, newKey);
+
+    }
+
+    
 
 
 }

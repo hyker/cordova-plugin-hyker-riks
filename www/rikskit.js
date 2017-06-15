@@ -6,6 +6,25 @@ var initialized = false;
 var ensureInitialized = function (f) { 
     initialized ? f() : backlog.push(f)
 }
+var reallyDone = function () {
+
+    for (var i = 0; i < backlog.length; i++) {
+	backlog[i]();
+	initialized = true;
+    }
+}
+
+
+function msgParse(msg){
+   switch(msg) {
+	case "INIT":
+	    console.log("init called msg pass");
+	    reallyDone();
+	    break;
+	default:
+	    throw new Error();
+    }
+}
 
 function RiksKit (deviceID, password, allowedForKey, newKey) {
 
@@ -18,19 +37,9 @@ function RiksKit (deviceID, password, allowedForKey, newKey) {
 	throw new Error(err);
     }
 
-    var reallyDone = function (teststr) {
-
-	console.log("inistr: " + teststr);
-
-	for (var i = 0; i < backlog.length; i++) {
-	    backlog[i]();
-	    initialized = true;
-	}
-    }
 
 
-
-    cordova.exec(reallyDone, onErr, "CordovaRiksKit", "init", [this.deviceId, this.configPath, this.password]);
+    cordova.exec(msgParse, onErr, "CordovaRiksKit", "init", [this.deviceId, this.configPath, this.password]);
 
 }
 
