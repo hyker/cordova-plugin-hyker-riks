@@ -1,5 +1,6 @@
 package io.hyker.plugin;
 
+import io.hyker.riks.box.RiksWhitelist;
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,13 +26,14 @@ public class CordovaRiksKit extends CordovaPlugin {
     //private static RiksKit riksKit = null;
 
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
-    //private static final CallbackContext longTermCallback
+    private CallbackContext longTermCallback;
 
-    private void sendCallbackAndKeepRef(CallbackContext cbc, String message) {
+    private void sendCallbackAndKeepRef(String message) {
 	
 	    PluginResult plugRes = new PluginResult(PluginResult.Status.OK, message);
 	    plugRes.setKeepCallback(true);
-	    cbc.sendPluginResult(plugRes);
+	    longTermCallback.sendPluginResult(plugRes);
+
     }
 
     @Override
@@ -45,7 +47,6 @@ public class CordovaRiksKit extends CordovaPlugin {
                 if (riksKit.get() != null){
 
                     callbackContext.error("can not instantiate twice");
-
                     return true;
 
                 } else {
@@ -70,9 +71,8 @@ public class CordovaRiksKit extends CordovaPlugin {
 			return true;
                     }
 
-                    callbackContext.error("initialized ");
-		    //sendCallbackAndKeepRef(callbackContext, "initialized");
-		    //sendCallbackAndKeepRef(callbackContext, "initialized2");
+		    this.longTermCallback = callbackContext;
+		    sendCallbackAndKeepRef("initialized");
                     return true;
                 }
 
@@ -222,7 +222,18 @@ public class CordovaRiksKit extends CordovaPlugin {
 
 	try {
             Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
-            RiksKit rk = new RiksKit(deviceId, password, ps, storage, new Whitelist());
+            RiksKit rk = new RiksKit(deviceId, password, ps, storage, new RiksWhitelist() {
+	    
+	        @Override
+	        public boolean allowedForKey(String s, String s1, String s2) {
+	            return true;
+	        }
+	    
+	        @Override
+	        public void newKey(String s) {
+	    
+	        }
+	    });
 
 	    synchronized(riksKit){
 
