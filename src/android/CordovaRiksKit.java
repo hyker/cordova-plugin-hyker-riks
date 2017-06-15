@@ -1,6 +1,6 @@
 package io.hyker.plugin;
 
-import io.hyker.riks.box.RiksWhitelist;
+import io.hyker.riks.box.AsynchronousWhitelistAdapter;
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -222,10 +222,32 @@ public class CordovaRiksKit extends CordovaPlugin {
 
 	try {
             Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
-            RiksKit rk = new RiksKit(deviceId, password, ps, storage, new RiksWhitelist() {
+
+	    AsynchronousWhitelistAdapter.NewKey newKey = new AsynchronousWhitelistAdapter.NewKey() {
+
+		@Override
+		boolean newKey(String keyId) {
+		    return true;
+		}
+
+	    }
+
+	    AsynchronousWhitelistAdapter.AllowedForKey allowedForKey = new AsynchronousWhitelistAdapter.AllowedForKey() {
+
+		@Override
+		void allowedForKey(String uid, String namespace, String keyId, Callback callback) {
+		    return true;
+		}
+	    }
+
+            RiksKit rk = new RiksKit(deviceId, password, ps, storage, new AsynchronousWhitelistAdapter(allowedForKey, newKey));
+
+
+/*
+new RiksWhitelist() {
 	    
 	        @Override
-	        public boolean allowedForKey(String s, String s1, String s2) {
+	        public boolean allowedForKey(String uid, String namespace, String keyId) {
 	            return true;
 	        }
 	    
@@ -235,6 +257,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 	        }
 	    });
 
+*/
 	    synchronized(riksKit){
 
 	        riksKit.set(rk);
