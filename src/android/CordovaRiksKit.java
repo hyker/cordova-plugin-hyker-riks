@@ -25,6 +25,14 @@ public class CordovaRiksKit extends CordovaPlugin {
     //private static RiksKit riksKit = null;
 
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
+    //private static final CallbackContext longTermCallback
+
+    private void sendCallbackAndKeepRef(CallbackContext cbc, String message) {
+	
+	    PluginResult plugRes = new PluginResult(PluginResult.Status.OK, message);
+	    plugRes.setKeepCallback(true);
+	    cbc.sendPluginResult(plugRes);
+    }
 
     @Override
     public boolean execute(final String action, final JSONArray data, final CallbackContext callbackContext) throws JSONException {
@@ -62,7 +70,9 @@ public class CordovaRiksKit extends CordovaPlugin {
 			return true;
                     }
 
-                    callbackContext.success("riks intitialized");
+                    callbackContext.error("initialized ");
+		    //sendCallbackAndKeepRef(callbackContext, "initialized");
+		    //sendCallbackAndKeepRef(callbackContext, "initialized2");
                     return true;
                 }
 

@@ -18,7 +18,9 @@ function RiksKit (deviceID, password, allowedForKey, newKey) {
 	throw new Error(err);
     }
 
-    var reallyDone = function () {
+    var reallyDone = function (teststr) {
+
+	console.log("inistr: " + teststr);
 
 	for (var i = 0; i < backlog.length; i++) {
 	    backlog[i]();
