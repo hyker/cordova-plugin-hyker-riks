@@ -3,7 +3,6 @@
 ## How To Use In Project
 
     npm install -g cordova
-    npm install -g taco-cli
 
     cordova create myprj com.example.myprj MyPrj
 
@@ -11,8 +10,6 @@
 
     cordova platform add ios
     cordova platform add android@6.2.2
-
-    *may need to apply patch*
 
     cordova plugin add cordova-plugin-add-swift-support --save
     #cordova plugin add cordova-plugin-cocoapod-support --save
@@ -25,52 +22,43 @@
       HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]
 
     cordova run ios
-    #taco run android --livereload
+    cordova run android --livereload
 
----
-# Cordova Hello World Plugin
+## Example Application
+    //this application registers a rikskit and send an encrypted message to itself
+     onDeviceReady: function() {
 
-Simple plugin that returns your string prefixed with hello.
+	var button = document.querySelector('button')
 
-Greeting a user with "Hello, world" is something that could be done in JavaScript. This plugin provides a simple example demonstrating how Cordova plugins work.
+        var cb = function(str){
+	    console.log("cb: " + str);
+            alert(str);
+        }
 
-## Using
+        addEvent(button, 'click', function () {
 
-Create a new Cordova Project
+	    var uid = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 11);
 
-    $ cordova create hello com.example.helloapp Hello
-    
-Install the plugin
+	    //function for filtering key requests
+	    var allowedForKey = function(uid, namespace, keyID){
+		//allow all keys
+		return true;
+	    }
 
-    $ cd hello
-    $ cordova plugin add https://github.com/don/cordova-plugin-hello.git
-    
+	    //function notified when a new key is added
+	    var newKey= function(){}
 
-Edit `www/js/index.js` and add the following code inside `onDeviceReady`
+	    //initialize the RiksKit, and register pubkey online
+            var rikskit = new RiksKit(uid, "password", allowedForKey, newKey);
 
-```js
-    var success = function(message) {
-        alert(message);
-    }
+	    var decrypt = function(str){
+            	alert("Encrypted:" + str);
+	        rikskit.decrypt(str).then(cb).then(rikskit.rekey("topiclol")).catch(cb);
+	    }
 
-    var failure = function() {
-        alert("Error calling Hello Plugin");
-    }
+            rikskit.encrypt("loolmsg", "topiclol").then(decrypt).catch(cb);
 
-    hello.greet("World", success, failure);
-```
 
-Install iOS or Android platform
+        })
 
-    cordova platform add ios
-    cordova platform add android
-    
-Run the code
 
-    cordova run 
-
-## More Info
-
-For more information on setting up Cordova see [the documentation](http://cordova.apache.org/docs/en/latest/guide/cli/index.html)
-
-For more info on plugins see the [Plugin Development Guide](http://cordova.apache.org/docs/en/latest/guide/hybrid/plugins/index.html)
