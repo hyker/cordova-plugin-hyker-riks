@@ -32,6 +32,11 @@ function msgParse(msg){
 	    break;
 	case "ALLOWED":
 	    
+	    var uid = json.uid;
+	    var namespace = json.namespace;
+	    var keyid = json.keyid;
+	    var allow = "true";
+	    cordova.exec("", "", "CordovaRiksKit", "keyconf", [uid, namespace, keyid,allow]);
 	    console.log("allowed called msg pass");
 	    break;
 	default:

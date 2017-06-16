@@ -1,5 +1,6 @@
 package io.hyker.plugin;
 
+import java.util.HashMap;
 import io.hyker.riks.box.AsynchronousWhitelistAdapter;
 import io.hyker.riks.box.RiksWhitelist;
 import org.apache.cordova.*;
@@ -28,6 +29,8 @@ public class CordovaRiksKit extends CordovaPlugin {
     private static final String OP_INIT = "INIT";
     private static final String OP_NEWKEY = "NEW_KEY";
     private static final String OP_ALLOW = "ALLOWED";
+    
+    private final HashMap<String, AsynchronousWhitelistAdapter.Callback> keyShareConfs = new HashMap<>();
 
     private void sendCallbackAndKeepRef(String message) {
 	
@@ -179,6 +182,13 @@ public class CordovaRiksKit extends CordovaPlugin {
                 callbackContext.success("reset all successful");
 		return true;
 
+            case "keyconf":
+
+		Log.d("ACTION", "action keyConf");
+		keyConf(data);
+                callbackContext.success("called reset");
+		return true;
+
             default:
 
                 callbackContext.error("unknown java method");
@@ -242,6 +252,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 
     }
 
+
     private RiksWhitelist setupWhitelist(){
         AsynchronousWhitelistAdapter.NewKey newKey = new AsynchronousWhitelistAdapter.NewKey() {
     
@@ -267,7 +278,8 @@ public class CordovaRiksKit extends CordovaPlugin {
 		    " \"keyid\": \""	    + keyId	+ "\"" + 
 		    "}"
 		);
-	    callback.callback(true);
+		keyShareConfs.put(uid + namespace + keyId, callback);
+		//callback.callback(true);
 	   }
         };
 
@@ -275,7 +287,23 @@ public class CordovaRiksKit extends CordovaPlugin {
 	return new AsynchronousWhitelistAdapter(allowedForKey, newKey);
 
     }
+    private void keyConf(JSONArray data) throws JSONException {
 
+	Log.d("FUNCTION: " , "keyConf");
+
+        String uid = data.getString(0);
+        String namespace= data.getString(1);
+        String keyId = data.getString(2);
+        String status = data.getString(3);
+
+	AsynchronousWhitelistAdapter.Callback callback = keyShareConfs.get(uid + namespace + keyId);
+
+	Log.d("STATUS: ", status);
+	Log.d("CALLBACK: : " ,(callback == null) ? "null" : callback.toString());
+	if (callback != null) {
+	    callback.callback(status.equals("true"));
+	}
+    }
     
 
 
