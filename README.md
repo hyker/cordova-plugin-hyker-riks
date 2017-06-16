@@ -17,12 +17,12 @@
     cordova plugin remove io.hyker.riks
     cordova plugin add https://github.com/hykersec/cordova-plugin-hyker-riks
 
-    open platforms/ios/MyPrj.xcworkspace
-      * COPY RiksKitiOS.framework and libriks.so to MyPrj root *
-      HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]
+    #open platforms/ios/MyPrj.xcworkspace
+      #* COPY RiksKitiOS.framework and libriks.so to MyPrj root *
+      #HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]
 
     cordova run ios
-    cordova run android --livereload
+    cordova run android 
 
 ## Example Application
     //this application registers a rikskit and send an encrypted message to itself
