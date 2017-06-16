@@ -14,8 +14,30 @@ var reallyDone = function () {
     }
 }
 
+function RiksKit (deviceID, password, allowedForKey, newKey) {
 
-function msgParse(msg){
+    if (typeof allowedForKey !== 'function') throw 'allowedForKey must be a function'
+    if (typeof newKey !== 'function') throw 'newKey must be a function'
+
+    this.deviceId = '#' + deviceID;
+    this.configPath = "www/development.conf";
+    this.password = password;
+    this.newKey = newKey;
+    this.allowedForKey = allowedForKey;
+    
+
+    var onErr = function (err) {
+	throw new Error(err);
+    }
+
+
+
+    cordova.exec(this.msgParse.bind(this), onErr, "CordovaRiksKit", "init", [this.deviceId, this.configPath, this.password]);
+
+}
+
+
+RiksKit.prototype.msgParse = function(msg){
 
     console.log("msg parse: " + msg);
     var json = JSON.parse(msg);
@@ -35,7 +57,10 @@ function msgParse(msg){
 	    var uid = json.uid;
 	    var namespace = json.namespace;
 	    var keyid = json.keyid;
-	    var allow = "true";
+
+	    var boolAllow = this.allowedForKey(uid, namespace, keyid);
+	    var allow = boolAllow ? "true" : "false";
+
 	    cordova.exec("", "", "CordovaRiksKit", "keyconf", [uid, namespace, keyid,allow]);
 	    console.log("allowed called msg pass");
 	    break;
@@ -44,24 +69,6 @@ function msgParse(msg){
 	    throw new Error(err);
 	    break;
     }
-}
-
-function RiksKit (deviceID, password, allowedForKey, newKey) {
-
-    this.deviceId = '#' + deviceID;
-    this.configPath = "www/development.conf";
-    this.password = password;
-    this.newKey = newKey;
-    
-
-    var onErr = function (err) {
-	throw new Error(err);
-    }
-
-
-
-    cordova.exec(msgParse, onErr, "CordovaRiksKit", "init", [this.deviceId, this.configPath, this.password]);
-
 }
 
 RiksKit.prototype.encrypt = function (data, namespace) {
