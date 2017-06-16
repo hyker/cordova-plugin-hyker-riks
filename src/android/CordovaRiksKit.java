@@ -25,7 +25,9 @@ public class CordovaRiksKit extends CordovaPlugin {
     
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
     private CallbackContext longTermCallback;
-    private static final String MSG_INIT = "INIT";
+    private static final String OP_INIT = "INIT";
+    private static final String OP_NEWKEY = "NEW_KEY";
+    private static final String OP_ALLOW = "ALLOWED";
 
     private void sendCallbackAndKeepRef(String message) {
 	
@@ -71,7 +73,7 @@ public class CordovaRiksKit extends CordovaPlugin {
                     }
 
 		    this.longTermCallback = callbackContext;
-		    sendCallbackAndKeepRef(MSG_INIT);
+		    sendCallbackAndKeepRef("{\"operation\": \"" + OP_INIT + "\"}");
                     return true;
                 }
 
@@ -245,6 +247,9 @@ public class CordovaRiksKit extends CordovaPlugin {
     
             @Override
             public void newKey(String keyId) {
+
+		Log.d("ACTION", "rekey async doing its stuff");
+		sendCallbackAndKeepRef("{\"operation\": \"" + OP_NEWKEY+ "\", \"keyid\": \"" + keyId+ "\"}");
         	    
             }
     
@@ -254,6 +259,14 @@ public class CordovaRiksKit extends CordovaPlugin {
     
 	   @Override
 	   public void allowedForKey(String uid, String namespace, String keyId, AsynchronousWhitelistAdapter.Callback callback) {
+
+		sendCallbackAndKeepRef(
+		    "{\"operation\": \""    + OP_ALLOW  + "\"," +
+		    " \"uid\": \""	    + uid	+ "\"," + 
+		    " \"namespace\": \""    + namespace + "\"," + 
+		    " \"keyid\": \""	    + keyId	+ "\"" + 
+		    "}"
+		);
 	    callback.callback(true);
 	   }
         };

@@ -16,13 +16,28 @@ var reallyDone = function () {
 
 
 function msgParse(msg){
-   switch(msg) {
+
+    console.log("msg parse: " + msg);
+    var json = JSON.parse(msg);
+    var operation = json.operation;
+
+    switch(operation) {
 	case "INIT":
 	    console.log("init called msg pass");
 	    reallyDone();
 	    break;
+	case "NEW_KEY":
+	    console.log("new_key called msg pass");
+	    
+	    break;
+	case "ALLOWED":
+	    
+	    console.log("allowed called msg pass");
+	    break;
 	default:
-	    throw new Error();
+	    console.log("msg: " + json);
+	    throw new Error(err);
+	    break;
     }
 }
 
@@ -31,6 +46,7 @@ function RiksKit (deviceID, password, allowedForKey, newKey) {
     this.deviceId = '#' + deviceID;
     this.configPath = "www/development.conf";
     this.password = password;
+    this.newKey = newKey;
     
 
     var onErr = function (err) {
@@ -77,6 +93,7 @@ RiksKit.prototype.preshare = function (recipientUID, keyID) {
 
 RiksKit.prototype.rekey = function (namespace) {
     return new Promise((resolve, reject) => {
+	console.log("rekey api called");
 
 	ensureInitialized(function () {
 	    cordova.exec(resolve, reject, "CordovaRiksKit", "rekey", [namespace]);
