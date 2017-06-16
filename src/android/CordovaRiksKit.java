@@ -46,7 +46,6 @@ public class CordovaRiksKit extends CordovaPlugin {
         switch (action) {
             case "init":
 
-		Log.d("ACTION", "action init");
 
                 if (riksKit.get() != null){
 
@@ -83,7 +82,6 @@ public class CordovaRiksKit extends CordovaPlugin {
 
             case "encrypt":
 
-		Log.d("ACTION", "action encrypt");
 
 		String encrypted = null;
 
@@ -111,7 +109,6 @@ public class CordovaRiksKit extends CordovaPlugin {
 	    
             case "decrypt":
 
-		Log.d("ACTION", "action decrypt");
 
                 String enc = data.getString(0);
 
@@ -143,7 +140,6 @@ public class CordovaRiksKit extends CordovaPlugin {
 
             case "preshare":
 
-		Log.d("ACTION", "action preshare");
 
                 String recipient = data.getString(0);
                 String keyId = data.getString(1);
@@ -160,7 +156,6 @@ public class CordovaRiksKit extends CordovaPlugin {
 
             case "rekey":
 
-		Log.d("ACTION", "action rekey");
 		riksKit.get().rekey(data.getString(0));
                 callbackContext.success("rekey successful");
 		return true;
@@ -177,14 +172,12 @@ public class CordovaRiksKit extends CordovaPlugin {
 */
             case "resetall":
 
-		Log.d("ACTION", "action reset all");
 		riksKit.get().resetReplayProtector();
                 callbackContext.success("reset all successful");
 		return true;
 
             case "keyconf":
 
-		Log.d("ACTION", "action keyConf");
 		keyConf(data);
                 callbackContext.success("called reset");
 		return true;
@@ -259,7 +252,6 @@ public class CordovaRiksKit extends CordovaPlugin {
             @Override
             public void newKey(String keyId) {
 
-		Log.d("ACTION", "rekey async doing its stuff");
 		sendCallbackAndKeepRef("{\"operation\": \"" + OP_NEWKEY+ "\", \"keyid\": \"" + keyId+ "\"}");
         	    
             }
@@ -289,7 +281,6 @@ public class CordovaRiksKit extends CordovaPlugin {
     }
     private void keyConf(JSONArray data) throws JSONException {
 
-	Log.d("FUNCTION: " , "keyConf");
 
         String uid = data.getString(0);
         String namespace= data.getString(1);
@@ -298,8 +289,6 @@ public class CordovaRiksKit extends CordovaPlugin {
 
 	AsynchronousWhitelistAdapter.Callback callback = keyShareConfs.get(uid + namespace + keyId);
 
-	Log.d("STATUS: ", status);
-	Log.d("CALLBACK: : " ,(callback == null) ? "null" : callback.toString());
 	if (callback != null) {
 	    callback.callback(status.equals("true"));
 	}
