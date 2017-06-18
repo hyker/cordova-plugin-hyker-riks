@@ -4,14 +4,15 @@ var backlog = [];
 var initialized = false;
 
 var ensureInitialized = function (f) { 
+
     initialized ? f() : backlog.push(f)
 }
 var reallyDone = function () {
 
     for (var i = 0; i < backlog.length; i++) {
 	backlog[i]();
-	initialized = true;
     }
+	initialized = true;
 }
 
 function RiksKit (deviceID, password, allowedForKey, newKey) {
@@ -74,6 +75,7 @@ RiksKit.prototype.encrypt = function (data, namespace) {
 
     	    cordova.exec(resolve, reject, "CordovaRiksKit", "encrypt", [data,namespace]);
 	})
+
     })
 }
 
