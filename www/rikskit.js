@@ -19,7 +19,7 @@ function RiksKit (deviceID, password, allowedForKey, newKey) {
     if (typeof allowedForKey !== 'function') throw 'allowedForKey must be a function'
     if (typeof newKey !== 'function') throw 'newKey must be a function'
 
-    this.deviceId = '#' + deviceID;
+    this.deviceID = '#' + deviceID;
     this.configPath = "www/development.conf";
     this.password = password;
     this.newKey = newKey;
@@ -32,7 +32,7 @@ function RiksKit (deviceID, password, allowedForKey, newKey) {
 
 
 
-    cordova.exec(this.msgParse.bind(this), onErr, "CordovaRiksKit", "init", [this.deviceId, this.configPath, this.password]);
+    cordova.exec(this.msgParse.bind(this), onErr, "CordovaRiksKit", "init", [this.deviceID, this.configPath, this.password]);
 
 }
 
