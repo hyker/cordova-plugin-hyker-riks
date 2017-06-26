@@ -1,5 +1,7 @@
 package io.hyker.plugin;
 
+
+
 import android.app.Activity;
 
 import org.lukhnos.nnio.file.Files;
@@ -19,10 +21,12 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
+import java.util.UUID;
 
 import io.hyker.cryptobox.PropertyStore;
 import io.hyker.cryptobox.Storage;
 import io.hyker.security.Crypto;
+import io.hyker.security.KeyAgreement;
 
 /**
  * Created by joakimb on 2017-05-05.
@@ -33,9 +37,9 @@ public class AndroidStorage implements Storage {
     private static final String PUBLIC_KEY_EXTENSION = "pub";
     private static final String SALT_EXTENSION = "salt";
 
-    private final PropertyStore propertyStore;
-    private final String workingDir;
-    private final KeyStore trustStore;
+    private  final PropertyStore propertyStore;
+    private  final String workingDir;
+    private  final KeyStore trustStore;
 
     public AndroidStorage(PropertyStore propertyStore, Activity activity) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
         this.propertyStore = propertyStore;
@@ -47,7 +51,6 @@ public class AndroidStorage implements Storage {
             trustStore.load(inputStream, password.toCharArray());
         }
     }
-
 
     @Override
     public KeyStore loadTrustStore() throws StorageException {
@@ -91,7 +94,7 @@ public class AndroidStorage implements Storage {
     @Override
     public KeyPair loadKeys(String uid, String password) throws StorageException{
         try {
-            String cryptoKeyPath = getKeyPath(uid, propertyStore);
+            String cryptoKeyPath = getKeyPath(uid);
 
             byte[] privateEncrypted = load(cryptoKeyPath + PRIVATE_KEY_EXTENSION);
             byte[] publicEncrypted = load(cryptoKeyPath + PUBLIC_KEY_EXTENSION);
@@ -108,7 +111,7 @@ public class AndroidStorage implements Storage {
     @Override
     public void storeKeys(KeyPair keyPair, String uid, String password) throws StorageException{
         try {
-            String cryptoKeyPath = getKeyPath(uid, propertyStore);
+            String cryptoKeyPath = getKeyPath(uid);
             createFile(cryptoKeyPath + PRIVATE_KEY_EXTENSION);
             try (FileOutputStream fos = new FileOutputStream(cryptoKeyPath + PRIVATE_KEY_EXTENSION)) {
                 fos.write(Crypto.encrypt(Crypto.generateKeyFromPassword(getSalt(cryptoKeyPath), password), keyPair.getPrivate().getEncoded()));
@@ -125,17 +128,17 @@ public class AndroidStorage implements Storage {
 
     private String getKeyStorePath(String uid, PropertyStore propertyStore) throws IOException {
         if (propertyStore.CERTIFICATE_EXCHANGE_ENABLED) {
-            return workingDir + File.separator + propertyStore.CERTIFICATE_EXCHANGE_KEYSTORE;
+            return workingDir + propertyStore.CERTIFICATE_EXCHANGE_KEYSTORE;
         } else if (propertyStore.PUBLIC_KEY_LOOKUP_ENABLED) {
-            return workingDir + File.separator + new File(propertyStore.KDI_KEY_STORES_PATH, uid + ".bks").getCanonicalPath();
+            return workingDir + new File(propertyStore.KDI_KEY_STORES_PATH, uid + ".bks").getCanonicalPath();
         } else {
             System.out.println("Neither certificate exchange nor public key lookup is enabled.");
             return null;
         }
     }
 
-    private String getKeyPath(String uid, PropertyStore propertyStore) throws IOException {
-        return workingDir + File.separator + new File(propertyStore.KEY_PATH, uid + ".key").getCanonicalPath();
+    private String getKeyPath(String uid) throws IOException {
+        return workingDir + new File(uid + ".key").getCanonicalPath();
     }
 
     private byte[] getSalt(String path) throws IOException {
