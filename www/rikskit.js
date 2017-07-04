@@ -40,6 +40,7 @@ function RiksKit (deviceID, password, allowedForKey, newKey) {
 
 RiksKit.prototype.msgParse = function(msg){
 
+
     var json = JSON.parse(msg);
     var operation = json.operation;
 

@@ -24,6 +24,7 @@ import android.util.Log;
 
 public class CordovaRiksKit extends CordovaPlugin {
     
+
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
     private CallbackContext longTermCallback;
     private static final String OP_INIT = "INIT";
@@ -122,6 +123,9 @@ public class CordovaRiksKit extends CordovaPlugin {
 			return true;
 		    }
 		}
+
+		//TODO remove Temporary fix to disable replay protection (we have a scenario where we do not want it)
+		riksKit.get().resetReplayProtector();
 
 		riksKit.get().decryptMessageAsync(enc, new RiksKit.DecryptionCallback() {
                     @Override
