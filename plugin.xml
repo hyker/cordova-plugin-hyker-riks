@@ -33,7 +33,8 @@
     </config-file>
 
     <source-file src="src/android/CordovaRiksKit.java" target-dir="src/io/hyker/plugin/"/>
-    <source-file src="src/android/AndroidStorage.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/AndroidCBStorage.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/AndroidRiksStorage.java" target-dir="src/io/hyker/plugin/"/>
     <lib-file src="src/android/libs/bcpkix-jdk15on-1.56.0.0.jar"/>
     <lib-file src="src/android/libs/core-1.56.0.0.jar"/>
     <lib-file src="src/android/libs/prov-1.56.0.0.jar"/>

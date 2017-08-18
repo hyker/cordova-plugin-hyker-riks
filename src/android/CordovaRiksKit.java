@@ -1,5 +1,6 @@
 package io.hyker.plugin;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import io.hyker.riks.box.AsynchronousWhitelistAdapter;
 import io.hyker.riks.box.RiksWhitelist;
@@ -11,9 +12,9 @@ import android.content.Context;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.hyker.cryptobox.PropertyStore;
-import io.hyker.cryptobox.Storage;
+import io.hyker.cryptobox.CryptoBoxStorage;
+import io.hyker.riks.box.RiksStorage;
 import io.hyker.riks.box.RiksKit;
-import io.hyker.riks.keys.SymKeyExpiredException;
 import io.hyker.riks.message.Message;
 import org.spongycastle.crypto.CryptoException;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import android.util.Log;
 
 public class CordovaRiksKit extends CordovaPlugin {
     
+
     private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
     private CallbackContext longTermCallback;
     private static final String OP_INIT = "INIT";
@@ -123,6 +125,9 @@ public class CordovaRiksKit extends CordovaPlugin {
 		    }
 		}
 
+		//TODO remove Temporary fix to disable replay protection (we have a scenario where we do not want it)
+		riksKit.get().resetReplayProtector();
+
 		riksKit.get().decryptMessageAsync(enc, new RiksKit.DecryptionCallback() {
                     @Override
                     public void callback(Message m, Exception e) {
@@ -202,7 +207,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 	    Message m = new Message().secret(message);
             encrypted = riksKit.get().encryptMessage(m, topic);
 
-        } catch (SymKeyExpiredException | CryptoException e) {
+        } catch (CryptoException | GeneralSecurityException e) {
 	    throw new IOException(e.getMessage());
         }
 	
@@ -227,9 +232,10 @@ public class CordovaRiksKit extends CordovaPlugin {
 	String testPassword = ps.TRUST_STORE_PASSWORD;
 
 	try {
-            Storage storage = new AndroidStorage(ps, this.cordova.getActivity());
+            CryptoBoxStorage cbstorage = new AndroidCBStorage(ps, this.cordova.getActivity());
+            RiksStorage rkstorage = new AndroidRiksStorage(deviceId, this.cordova.getActivity());
 
-            RiksKit rk = new RiksKit(deviceId, password, ps, storage, setupWhitelist());
+            RiksKit rk = new RiksKit(deviceId, password, ps, cbstorage, rkstorage, setupWhitelist());
 
 
 	    synchronized(riksKit){

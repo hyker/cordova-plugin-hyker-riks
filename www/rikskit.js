@@ -25,12 +25,8 @@ cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
         this.allowedForKey = allowedForKey;
 
         var onErr = function (err) {
-    	throw new Error(err);
+            throw new Error(err);
         }
-    
-    
-        cordova.exec(this.msgParse.bind(this), onErr, "CordovaRiksKit", "init", [this.deviceID, this.configPath, this.password]);
-    
     }
     
     

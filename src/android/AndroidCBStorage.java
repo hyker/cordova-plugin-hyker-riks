@@ -4,6 +4,7 @@ package io.hyker.plugin;
 
 import android.app.Activity;
 
+import io.hyker.cryptobox.CryptoBoxStorage;
 import org.lukhnos.nnio.file.Files;
 import org.lukhnos.nnio.file.Paths;
 
@@ -14,25 +15,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.util.UUID;
 
 import io.hyker.cryptobox.PropertyStore;
-import io.hyker.cryptobox.Storage;
 import io.hyker.security.Crypto;
-import io.hyker.security.KeyAgreement;
 
 /**
  * Created by joakimb on 2017-05-05.
  */
 
-public class AndroidStorage implements Storage {
+public class AndroidCBStorage implements CryptoBoxStorage {
     private static final String PRIVATE_KEY_EXTENSION = "priv";
     private static final String PUBLIC_KEY_EXTENSION = "pub";
     private static final String SALT_EXTENSION = "salt";
@@ -41,7 +38,7 @@ public class AndroidStorage implements Storage {
     private  final String workingDir;
     private  final KeyStore trustStore;
 
-    public AndroidStorage(PropertyStore propertyStore, Activity activity) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
+    public AndroidCBStorage(PropertyStore propertyStore, Activity activity) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
         this.propertyStore = propertyStore;
         this.workingDir = activity.getApplicationContext().getFilesDir().getAbsolutePath();// + File.separator + "lok";
 
@@ -127,14 +124,7 @@ public class AndroidStorage implements Storage {
     }
 
     private String getKeyStorePath(String uid, PropertyStore propertyStore) throws IOException {
-        if (propertyStore.CERTIFICATE_EXCHANGE_ENABLED) {
-            return workingDir + propertyStore.CERTIFICATE_EXCHANGE_KEYSTORE;
-        } else if (propertyStore.PUBLIC_KEY_LOOKUP_ENABLED) {
             return workingDir + new File(propertyStore.KDI_KEY_STORES_PATH, uid + ".bks").getCanonicalPath();
-        } else {
-            System.out.println("Neither certificate exchange nor public key lookup is enabled.");
-            return null;
-        }
     }
 
     private String getKeyPath(String uid) throws IOException {
