@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        id="io.hyker.riks"
+        version="1.0.2">
+
+  <name>HYKER RIKS</name>
+
+  <description>
+    A plugin integrating HYKER RIKS capabilities.
+  </description>
+
+  <!---  <dependency id="cordova-plugin-cocoapod-support"/> -->
+
+
+  <engines>
+    <engine name="cordova" version=">=6.5.0"/>
+    <engine name="cordova-android" version=">=6.2.2" />
+    <engine name="cordova-ios" version=">=1.7.1" />
+  </engines>
+
+  <asset src="www/rikskit.js" target="js/rikskit.js"/>
+
+  <js-module src="www/rikskit.js" name="RiksKit">
+    <clobbers target="RiksKit" />
+  </js-module>
+
+  <platform name="android">
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="CordovaRiksKit">
+        <param name="android-package" value="io.hyker.plugin.CordovaRiksKit"/>
+      </feature>
+    </config-file>
+
+    <source-file src="src/android/CordovaRiksKit.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/AndroidCBStorage.java" target-dir="src/io/hyker/plugin/"/>
+    <source-file src="src/android/AndroidRiksStorage.java" target-dir="src/io/hyker/plugin/"/>
+    <lib-file src="src/android/libs/bcpkix-jdk15on-1.56.0.0.jar"/>
+    <lib-file src="src/android/libs/core-1.56.0.0.jar"/>
+    <lib-file src="src/android/libs/prov-1.56.0.0.jar"/>
+    <lib-file src="src/android/libs/riks-android-2.0.jar"/>
+    <lib-file src="src/android/libs/crypto-client-java-android-2.0.jar"/>
+
+  </platform>
+
+  <platform name="ios">
+
+    <config-file target="config.xml" parent="/*">
+      <feature name="RiksKit">
+        <param name="ios-package" value="RiksKit" />
+      </feature>
+    </config-file>
+
+    <source-file src="src/ios/RiksKit.swift"/>
+        <pods-config ios-min-version="8.0" use-frameworks="true">
+            <!-- optionally add private spec sources -->
+            <!--<source url="git@github.com:foo/foo-specs.git"/>-->
+        </pods-config>
+        <pod name="OpenSSL" version="~> 1.0.2" />
+  </platform>
+
+</plugin>
