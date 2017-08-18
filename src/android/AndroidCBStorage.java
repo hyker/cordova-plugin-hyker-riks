@@ -124,12 +124,7 @@ public class AndroidCBStorage implements CryptoBoxStorage {
     }
 
     private String getKeyStorePath(String uid, PropertyStore propertyStore) throws IOException {
-        if (propertyStore.PUBLIC_KEY_LOOKUP_ENABLED) {
             return workingDir + new File(propertyStore.KDI_KEY_STORES_PATH, uid + ".bks").getCanonicalPath();
-        } else {
-            System.out.println("public key lookup is not enabled.");
-            return null;
-        }
     }
 
     private String getKeyPath(String uid) throws IOException {
