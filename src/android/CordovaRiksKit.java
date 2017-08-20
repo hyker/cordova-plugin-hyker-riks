@@ -133,7 +133,8 @@ public class CordovaRiksKit extends CordovaPlugin {
                     public void callback(Message m, Exception e) {
 		    
 			if (e != null){
-                    	    callbackContext.error("Decrypt error: " + e.getMessage());
+			    String et = e.getClass().getCanonicalName();
+                    	    callbackContext.error("Decrypt error: " + et + " : " + e.getMessage());
 		    	} else {
             	    	    String decryptedMessage = m.secret;
                     	    callbackContext.success(decryptedMessage);
