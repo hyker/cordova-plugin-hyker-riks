@@ -1,0 +1,41 @@
+{
+  "name": "cordova-plugin-hyker-riks",
+  "version": "1.0.3",
+  "description": "\n    A plugin integrating HYKER RIKS capabilities.\n  ",
+  "cordova": {
+    "id": "io.hyker.riks",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=6.5.0"
+    },
+    {
+      "name": "cordova-android",
+      "version": ">=6.2.2"
+    },
+    {
+      "name": "cordova-ios",
+      "version": ">=1.7.1"
+    }
+  ],
+  "author": "hyker",
+  "license": "see attached licecne file",
+  "bugs": {
+    "url": "https://github.com/hykersec/cordova-plugin-hyker-riks/issues"
+  },
+  "homepage": "https://github.com/hykersec/cordova-plugin-hyker-riks#readme"
+}
