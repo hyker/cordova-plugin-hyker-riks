@@ -5,8 +5,8 @@ cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
     var ensureInitialized = function (f) { 
         initialized ? f() : backlog.push(f)
     }
+
     var reallyDone = function () {
-    
         for (var i = 0; i < backlog.length; i++) {
     	backlog[i]();
         }
@@ -14,7 +14,7 @@ cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
     }
     
     function RiksKit (deviceID, password, allowedForKey, newKey) {
-    
+        console.log("RIKSKIT init");
         if (typeof allowedForKey !== 'function') throw 'allowedForKey must be a function'
         if (typeof newKey !== 'function') throw 'newKey must be a function'
     
@@ -27,11 +27,14 @@ cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
         var onErr = function (err) {
             throw new Error(err);
         }
+
+	cordova.exec(this.msgParse.bind(this), onErr, "CordovaRiksKit", "init", [this.deviceID, this.configPath, this.password]);
+
     }
     
     
     RiksKit.prototype.msgParse = function(msg){
-    
+        console.log("RIKSKIT msgParse");
         var json = JSON.parse(msg);
         var operation = json.operation;
     
@@ -40,10 +43,8 @@ cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
     	    reallyDone();
     	    break;
     	case "NEW_KEY":
-    	    
     	    break;
     	case "ALLOWED":
-    	    
     	    var uid = json.uid;
     	    var namespace = json.namespace;
     	    var keyid = json.keyid;
@@ -75,13 +76,10 @@ cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
     
     RiksKit.prototype.decrypt = function (data) {
 	console.log("decryptiiiiiiiiiiiiiing: " + data);
-        return new Promise((resolve, reject) => {
-    
-    	ensureInitialized(function () {
-    
-    	    cordova.exec(resolve, reject, "CordovaRiksKit", "decrypt", [data]);
-    
-    	})
+        return new Promise((resolve, reject) => { 
+    	    ensureInitialized(function () { 
+    	        cordova.exec(resolve, reject, "CordovaRiksKit", "decrypt", [data]);
+    	    })
         })
     }
     
