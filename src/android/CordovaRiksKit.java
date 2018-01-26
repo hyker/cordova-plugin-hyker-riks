@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,8 +26,8 @@ public class CordovaRiksKit extends CordovaPlugin {
     private static final String OPERATION_NEW_KEY = "NEW_KEY";
     private static final String OPERATION_ALLOWED = "ALLOWED";
 
-    private final AtomicReference<RiksKit> atomicRiksKit = new AtomicReference<>();
-    private final HashMap<String, Future<Boolean>> pendingFutures = new HashMap<>();
+    private final AtomicReference<RiksKit> atomicRiksKit = new AtomicReference<RiksKit>();
+    private final HashMap<String, Future<Boolean>> pendingFutures = new HashMap<String, Future<Boolean>>();
     private CallbackContext longTermCallback;
 
     @Override
@@ -59,10 +60,16 @@ public class CordovaRiksKit extends CordovaPlugin {
                     String data = arguments.getString(0);
                     String keySpace = arguments.getString(0);
 
-                    getRiksKit().encryptMessage(new Message(data.getBytes(StandardCharsets.UTF_8)), keySpace).then((byte[] encryptedMessage) -> {
-                        callbackContext.success(new String(encryptedMessage, StandardCharsets.UTF_8));
-                    }).onError((Exception e) -> {
-                        callbackContext.error(String.format("%s: %s", e.getClass().getCanonicalName(), e.getMessage()));
+                    getRiksKit().encryptMessage(new Message(data.getBytes(StandardCharsets.UTF_8)), keySpace).then(new Consumer<byte[]>() {
+                        @Override
+                        public void accept(byte[] encryptedMessage) {
+                            callbackContext.success(new String(encryptedMessage, StandardCharsets.UTF_8));
+                        }
+                    }).onError(new Consumer<Exception>() {
+                        @Override
+                        public void accept(Exception e) {
+                            callbackContext.error(String.format("%s: %s", e.getClass().getCanonicalName(), e.getMessage()));
+                        }
                     });
 
                     break;
@@ -72,10 +79,16 @@ public class CordovaRiksKit extends CordovaPlugin {
 
                     getRiksKit().resetReplayProtector();
 
-                    getRiksKit().decryptMessage(data.getBytes(StandardCharsets.UTF_8)).then((Message message) -> {
-                        callbackContext.success(new String(message.getSecretData(), StandardCharsets.UTF_8));
-                    }).onError((Exception e) -> {
-                        callbackContext.error(String.format("%s: %s", e.getClass().getCanonicalName(), e.getMessage()));
+                    getRiksKit().decryptMessage(data.getBytes(StandardCharsets.UTF_8)).then(new Consumer<Message>() {
+                        @Override
+                        public void accept(Message message) {
+                            callbackContext.success(new String(message.getSecretData(), StandardCharsets.UTF_8));
+                        }
+                    }).onError(new Consumer<Exception>() {
+                        @Override
+                        public void accept(Exception e) {
+                            callbackContext.error(String.format("%s: %s", e.getClass().getCanonicalName(), e.getMessage()));
+                        }
                     });
 
                     break;
@@ -169,7 +182,7 @@ public class CordovaRiksKit extends CordovaPlugin {
         return new Whitelist() {
             @Override
             public Future<Boolean> allowedForKey(String uid, String keySpace, String keyID) {
-                Future<Boolean> future = new Future<>();
+                Future<Boolean> future = new Future<Boolean>();
                 pendingFutures.put(hash(uid, keySpace, keyID), future);
 
                 sendCallbackAndKeepRef(String.format("{\"operation\": \"%s\", \"uid\": \"%s\", \"keySpace\": \"%s\", \"keyID\": \"%s\"}", OPERATION_ALLOWED, uid, keySpace, keyID));
