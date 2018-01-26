@@ -11,7 +11,6 @@
 
   <!---  <dependency id="cordova-plugin-cocoapod-support"/> -->
 
-
   <engines>
     <engine name="cordova" version=">=6.5.0"/>
     <engine name="cordova-android" version=">=6.2.2" />
@@ -25,7 +24,6 @@
   </js-module>
 
   <platform name="android">
-
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="CordovaRiksKit">
         <param name="android-package" value="io.hyker.plugin.CordovaRiksKit"/>
@@ -34,16 +32,15 @@
 
     <source-file src="src/android/CordovaRiksKit.java" target-dir="src/io/hyker/plugin/"/>
     
-    <lib-file src="lib/bcpkix-jdk15on-1.58.0.0.jar"/>
-    <lib-file src="lib/core-1.58.0.0.jar"/>
-    <lib-file src="lib/prov-1.58.0.0.jar"/>
-    <lib-file src="lib/gson-2.8.2.jar"/>
-    <lib-file src="lib/slf4j-simple-1.7.12.jar"/>
-    <lib-file src="lib/riks.aar"/>
+    <lib-file src="src/android/libs/bcpkix-jdk15on-1.58.0.0.jar"/>
+    <lib-file src="src/android/libs/core-1.58.0.0.jar"/>
+    <lib-file src="src/android/libs/prov-1.58.0.0.jar"/>
+    <lib-file src="src/android/libs/gson-2.8.2.jar"/>
+    <lib-file src="src/android/libs/slf4j-simple-1.7.12.jar"/>
+    <lib-file src="src/android/libs/riks.aar"/>
   </platform>
 
   <platform name="ios">
-
     <config-file target="config.xml" parent="/*">
       <feature name="RiksKit">
         <param name="ios-package" value="RiksKit" />
