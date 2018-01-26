@@ -47,7 +47,6 @@ cordova.define("io.hyker.riks.RiksKit", (require, exports, module) => {
             message.uid,
             message.keySpace,
             message.keyID,
-            allow,
             this.allowedForKey(message.uid, message.keySpace, message.keyID) ? "true" : "false"
           ];
   
