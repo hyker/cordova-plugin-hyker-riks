@@ -81,10 +81,10 @@ cordova.define("io.hyker.riks.RiksKit", (require, exports, module) => {
     })
   }
   
-  RiksKit.prototype.preshareKeyspace = (recipientUID, keyID) => {
+  RiksKit.prototype.preshareKeyspace = (recipientUID, keySpace) => {
     return new Promise((resolve, reject) => {
       ensureInitialized(() => {
-        cordova.exec(resolve, reject, "CordovaRiksKit", "preshareKeyspace", [recipientUID, keyID]);
+        cordova.exec(resolve, reject, "CordovaRiksKit", "preshareKeyspace", [recipientUID, keySpace]);
       })
     })
   }
