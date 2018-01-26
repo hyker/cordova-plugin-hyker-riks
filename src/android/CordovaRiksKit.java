@@ -1,306 +1,193 @@
 package io.hyker.plugin;
 
-import java.security.GeneralSecurityException;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
-import io.hyker.riks.box.AsynchronousWhitelistAdapter;
-import io.hyker.riks.box.RiksWhitelist;
-import org.apache.cordova.*;
+import java.io.IOException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
-import java.io.IOException;
-import android.content.Context;
-import java.util.concurrent.atomic.AtomicReference;
+import org.json.JSONObject;
 
-import io.hyker.cryptobox.PropertyStore;
-import io.hyker.cryptobox.CryptoBoxStorage;
-import io.hyker.riks.box.RiksStorage;
-import io.hyker.riks.box.RiksKit;
-import io.hyker.riks.message.Message;
-import org.spongycastle.crypto.CryptoException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.Security;
-import java.util.Properties;
-import android.util.Log;
+import org.apache.cordova.*;
+
+import io.hyker.FileStorage;
+import io.hyker.Future;
+import io.hyker.Json;
+import io.hyker.Storage;
+import io.hyker.riks.RiksKit;
+import io.hyker.riks.Message;
+import io.hyker.riks.Whitelist;
 
 public class CordovaRiksKit extends CordovaPlugin {
-    
 
-    private static final AtomicReference<RiksKit> riksKit = new AtomicReference<>();
+    private static final String OPERATION_INIT = "INIT";
+    private static final String OPERATION_NEW_KEY = "NEW_KEY";
+    private static final String OPERATION_ALLOWED = "ALLOWED";
+
+    private final AtomicReference<RiksKit> atomicRiksKit = new AtomicReference<>();
+    private final HashMap<String, Future<Boolean>> pendingFutures = new HashMap<>();
     private CallbackContext longTermCallback;
-    private static final String OP_INIT = "INIT";
-    private static final String OP_NEWKEY = "NEW_KEY";
-    private static final String OP_ALLOW = "ALLOWED";
-    
-    private final HashMap<String, AsynchronousWhitelistAdapter.Callback> keyShareConfs = new HashMap<>();
-
-    private void sendCallbackAndKeepRef(String message) {
-	
-	    PluginResult plugRes = new PluginResult(PluginResult.Status.OK, message);
-	    plugRes.setKeepCallback(true);
-	    longTermCallback.sendPluginResult(plugRes);
-
-    }
 
     @Override
-    public boolean execute(final String action, final JSONArray data, final CallbackContext callbackContext) throws JSONException {
+    public boolean execute(final String action, final JSONArray arguments, final CallbackContext callbackContext) throws JSONException {
+        try {
+            switch (action) {
+                case "init": {
+                    if (atomicRiksKit.get() != null) {
+                        callbackContext.error("Cannot instantiate twice.");
+                    } else {
+                        String uid = arguments.getString(0);
+                        String password = arguments.getString(1);
+                        JSONObject config = arguments.getJSONObject(2);
 
-        switch (action) {
-            case "init":
+                        initRiksKit(uid, password, config);
 
+                        synchronized (atomicRiksKit) {
+                            while (atomicRiksKit.get() == null) {
+                                atomicRiksKit.wait();
+                            }
+                        }
 
-                if (riksKit.get() != null){
-
-                    callbackContext.error("can not instantiate twice");
-                    return true;
-
-                } else {
-
-		    try {
-
-                        initRiks(data);
-			synchronized (riksKit) {
-			    try {
-				while (riksKit.get() == null){
-				    riksKit.wait();
-				}
-			    } catch (InterruptedException e) {
-				callbackContext.error("Error: " + e.getMessage());
-				return true;
-			    }
-			}
-
-                    } catch (IOException e) {
-
-                        callbackContext.error(" Error: " + e.getMessage());
-			return true;
+                        this.longTermCallback = callbackContext;
+                        sendCallbackAndKeepRef(String.format("{\"operation\": \"%s\"}", OPERATION_INIT));
                     }
 
-		    this.longTermCallback = callbackContext;
-		    sendCallbackAndKeepRef("{\"operation\": \"" + OP_INIT + "\"}");
-                    return true;
+                    break;
                 }
+                case "encrypt": {
+                    String data = arguments.getString(0);
+                    String keySpace = arguments.getString(0);
 
+                    getRiksKit().encryptMessage(new Message(data.getBytes(StandardCharsets.UTF_8)), keySpace).then((byte[] encryptedMessage) -> {
+                        callbackContext.success(new String(encryptedMessage, StandardCharsets.UTF_8));
+                    }).onError((Exception e) -> {
+                        callbackContext.error(String.format("%s: %s", e.getClass().getCanonicalName(), e.getMessage()));
+                    });
 
-            case "encrypt":
-
-
-		String encrypted = null;
-
-        	try {
-	            synchronized (riksKit) {
-			try {
-			    while (riksKit.get() == null){
-				riksKit.wait();
-			    }
-			} catch (InterruptedException e) {
-			    callbackContext.error(" Error: " + e.getMessage());
-			    return true;
-			}
-		    }
-
-                    encrypted = encrypt(data);
-
-                } catch (IOException e) {
-                    callbackContext.error(" Error: " + e.getMessage());
-		    return true;
+                    break;
                 }
+                case "decrypt": {
+                    String data = arguments.getString(0);
 
-                callbackContext.success(encrypted);
-                return true;
-	    
-            case "decrypt":
+                    getRiksKit().resetReplayProtector();
 
+                    getRiksKit().decryptMessage(data.getBytes(StandardCharsets.UTF_8)).then((Message message) -> {
+                        callbackContext.success(new String(message.getSecretData(), StandardCharsets.UTF_8));
+                    }).onError((Exception e) -> {
+                        callbackContext.error(String.format("%s: %s", e.getClass().getCanonicalName(), e.getMessage()));
+                    });
 
-                String enc = data.getString(0);
+                    break;
+                }
+                case "preshare": {
+                    String recipientUID = arguments.getString(0);
+                    String keyID = arguments.getString(1);
 
-	        synchronized (riksKit) {
-		    try {
-			while (riksKit.get() == null){
-			    riksKit.wait();
-			}
-		    } catch (InterruptedException e) {
-			callbackContext.error(" Error: " + e.getMessage());
-			return true;
-		    }
-		}
+                    getRiksKit().preshareKey(recipientUID, keyID);
 
-		//TODO remove Temporary fix to disable replay protection (we have a scenario where we do not want it)
-		riksKit.get().resetReplayProtector();
+                    callbackContext.success();
+                    break;
+                }
+                case "preshareKeyspace": {
+                    String recipientUID = arguments.getString(0);
+                    String keySpace = arguments.getString(1);
 
-		riksKit.get().decryptMessageAsync(enc, new RiksKit.DecryptionCallback() {
-                    @Override
-                    public void callback(Message m, Exception e) {
-		    
-			if (e != null){
-			    String et = e.getClass().getCanonicalName();
-                    	    callbackContext.error("Decrypt error: " + et + " : " + e.getMessage());
-		    	} else {
-            	    	    String decryptedMessage = m.secret;
-                    	    callbackContext.success(decryptedMessage);
-		    	}
-		    }
-                });
+                    getRiksKit().preshareChannel(recipientUID, keySpace);
 
-                return true;
+                    callbackContext.success();
+                    break;
+                }
+                case "rekey": {
+                    getRiksKit().rekey(arguments.getString(0));
 
-            case "preshare":
+                    callbackContext.success();
+                    break;
+                }
+                case "resetReplayProtector": {
+                    getRiksKit().resetReplayProtector();
 
+                    callbackContext.success();
+                    break;
+                }
+                case "resolveWhitelist": {
+                    String uid = arguments.getString(0);
+                    String keySpace = arguments.getString(1);
+                    String keyID = arguments.getString(2);
+                    String status = arguments.getString(3);
 
-                String recipient = data.getString(0);
-                String keyId = data.getString(1);
+                    if (pendingFutures.containsKey(hash(uid, keySpace, keyID))) {
+                        pendingFutures.remove(hash(uid, keySpace, keyID)).set(status.equals("true"));
+                    }
 
-		try {
-		    riksKit.get().preShareKey(recipient, keyId);
-		} catch (Exception e) {
-                    callbackContext.error("Keyshare error: " + e.getMessage());
-		}
-
-                callbackContext.success("preshare successful");
-
-		return true;
-
-            case "rekey":
-
-		riksKit.get().rekey(data.getString(0));
-                callbackContext.success("rekey successful");
-		return true;
-
-/*
-            case "reset":
-
-		Log.d("ACTION", "action reset");
-		riksKit.get().rekey(data.getString(0));
-                callbackContext.success("reset successful");
-	
-		return true;
-
-*/
-            case "resetall":
-
-		riksKit.get().resetReplayProtector();
-                callbackContext.success("reset all successful");
-		return true;
-
-            case "keyconf":
-
-		keyConf(data);
-                callbackContext.success("called reset");
-		return true;
-
-            default:
-
-                callbackContext.error("unknown java method");
-                return false;
-
-        }
-
-    }
-
-    private String encrypt(JSONArray data) throws JSONException, IOException {
-
-        String message = data.getString(0);
-        String topic = data.getString(1);
-
-	String encrypted = null;
-        try {
-
-	    Message m = new Message().secret(message);
-            encrypted = riksKit.get().encryptMessage(m, topic);
-
-        } catch (CryptoException | GeneralSecurityException e) {
-	    throw new IOException(e.getMessage());
-        }
-	
-	return encrypted;
-    }
-
-    private void initRiks(JSONArray data) throws JSONException, IOException {
-
-        Context context = this.cordova.getActivity().getApplicationContext(); 
-
-        String deviceId = data.getString(0);
-        String configPath = data.getString(1);
-        String password = data.getString(2);
-
-
-	PropertyStore ps = null;
-	InputStream is = null;
-	is = context.getAssets().open(configPath);
-	Properties properties = new Properties();
-	properties.load(is);
-	ps = new PropertyStore(properties);
-	String testPassword = ps.TRUST_STORE_PASSWORD;
-
-	try {
-            CryptoBoxStorage cbstorage = new AndroidCBStorage(ps, this.cordova.getActivity());
-            RiksStorage rkstorage = new AndroidRiksStorage(deviceId, this.cordova.getActivity());
-
-            RiksKit rk = new RiksKit(deviceId, password, ps, cbstorage, rkstorage, setupWhitelist());
-
-
-	    synchronized(riksKit){
-
-	        riksKit.set(rk);
-	        riksKit.notifyAll();
-	    }
-
-        } catch (Exception e) {
-	    throw new IOException(e.getMessage());
-        }
-	return;
-
-    }
-
-
-    private RiksWhitelist setupWhitelist(){
-        AsynchronousWhitelistAdapter.NewKey newKey = new AsynchronousWhitelistAdapter.NewKey() {
-    
-            @Override
-            public void newKey(String keyId) {
-
-		sendCallbackAndKeepRef("{\"operation\": \"" + OP_NEWKEY+ "\", \"keyid\": \"" + keyId+ "\"}");
-        	    
+                    callbackContext.success();
+                    break;
+                }
+                default: {
+                    callbackContext.error("Unknown Java method.");
+                    return false;
+                }
             }
-    
-        };
-    
-        AsynchronousWhitelistAdapter.AllowedForKey allowedForKey = new AsynchronousWhitelistAdapter.AllowedForKey() {
-    
-	   @Override
-	   public void allowedForKey(String uid, String namespace, String keyId, AsynchronousWhitelistAdapter.Callback callback) {
+        } catch (Exception e) {
+            callbackContext.error(e.getMessage());
+        }
 
-		sendCallbackAndKeepRef(
-		    "{\"operation\": \""    + OP_ALLOW  + "\"," +
-		    " \"uid\": \""	    + uid	+ "\"," + 
-		    " \"namespace\": \""    + namespace + "\"," + 
-		    " \"keyid\": \""	    + keyId	+ "\"" + 
-		    "}"
-		);
-		keyShareConfs.put(uid + namespace + keyId, callback);
-		//callback.callback(true);
-	   }
-        };
-
-
-	return new AsynchronousWhitelistAdapter(allowedForKey, newKey);
-
+        return true;
     }
-    private void keyConf(JSONArray data) throws JSONException {
 
-
-        String uid = data.getString(0);
-        String namespace= data.getString(1);
-        String keyId = data.getString(2);
-        String status = data.getString(3);
-
-	AsynchronousWhitelistAdapter.Callback callback = keyShareConfs.get(uid + namespace + keyId);
-
-	if (callback != null) {
-	    callback.callback(status.equals("true"));
-	}
+    private void sendCallbackAndKeepRef(String message) {
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, message);
+        pluginResult.setKeepCallback(true);
+        longTermCallback.sendPluginResult(pluginResult);
     }
-    
 
+    private RiksKit getRiksKit() throws InterruptedException {
+        synchronized (atomicRiksKit) {
+            while (atomicRiksKit.get() == null) {
+                atomicRiksKit.wait();
+            }
+            return atomicRiksKit.get();
+        }
+    }
+
+    private void initRiksKit(String uid, String password, JSONObject config) throws IOException {
+        try {
+            Storage storage = new FileStorage(this.cordova.getActivity().getFilesDir());
+            RiksKit riksKit = new RiksKit(uid, password, initWhitelist(), Json.parse(config.toString()), storage);
+
+            synchronized (atomicRiksKit) {
+                atomicRiksKit.set(riksKit);
+                atomicRiksKit.notifyAll();
+            }
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+    }
+
+
+    private Whitelist initWhitelist(){
+        return new Whitelist() {
+            @Override
+            public Future<Boolean> allowedForKey(String uid, String keySpace, String keyID) {
+                Future<Boolean> future = new Future<>();
+                pendingFutures.put(hash(uid, keySpace, keyID), future);
+
+                sendCallbackAndKeepRef(String.format("{\"operation\": \"%s\", \"uid\": \"%s\", \"keySpace\": \"%s\", \"keyID\": \"%s\"}", OPERATION_ALLOWED, uid, keySpace, keyID));
+
+                return future;
+            }
+
+            @Override
+            public void newKey(String keySpace, String keyID) {
+                sendCallbackAndKeepRef(String.format("{\"operation\": \"%s\", \"keyID\": \"%s\"}", OPERATION_NEW_KEY, keyID));
+            }
+        };
+    }
+
+    public String hash(String... values) {
+        long result = 17;
+        for (String value : values) result = 37 * result + value.hashCode();
+        return String.valueOf(result);
+    }
 
 }

@@ -1,7 +1,65 @@
 {
-  "name": "cordova-plugin-hyker-riks",
-  "version": "1.0.3",
-  "description": "\n    A plugin integrating HYKER RIKS capabilities.\n  ",
+  "_args": [
+    [
+      {
+        "raw": "https://github.com/hykersec/cordova-plugin-hyker-riks",
+        "scope": null,
+        "escapedName": null,
+        "name": null,
+        "rawSpec": "https://github.com/hykersec/cordova-plugin-hyker-riks",
+        "spec": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git",
+        "type": "hosted",
+        "hosted": {
+          "type": "github",
+          "ssh": "git@github.com:hykersec/cordova-plugin-hyker-riks.git",
+          "sshUrl": "git+ssh://git@github.com/hykersec/cordova-plugin-hyker-riks.git",
+          "httpsUrl": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git",
+          "gitUrl": "git://github.com/hykersec/cordova-plugin-hyker-riks.git",
+          "shortcut": "github:hykersec/cordova-plugin-hyker-riks",
+          "directUrl": "https://raw.githubusercontent.com/hykersec/cordova-plugin-hyker-riks/master/package.json"
+        }
+      },
+      "D:\\hyker\\riks-cordova\\myproject"
+    ]
+  ],
+  "_from": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git",
+  "_id": "cordova-plugin-hyker-riks@1.0.3",
+  "_inCache": true,
+  "_location": "/cordova-plugin-hyker-riks",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "https://github.com/hykersec/cordova-plugin-hyker-riks",
+    "scope": null,
+    "escapedName": null,
+    "name": null,
+    "rawSpec": "https://github.com/hykersec/cordova-plugin-hyker-riks",
+    "spec": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git",
+    "type": "hosted",
+    "hosted": {
+      "type": "github",
+      "ssh": "git@github.com:hykersec/cordova-plugin-hyker-riks.git",
+      "sshUrl": "git+ssh://git@github.com/hykersec/cordova-plugin-hyker-riks.git",
+      "httpsUrl": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git",
+      "gitUrl": "git://github.com/hykersec/cordova-plugin-hyker-riks.git",
+      "shortcut": "github:hykersec/cordova-plugin-hyker-riks",
+      "directUrl": "https://raw.githubusercontent.com/hykersec/cordova-plugin-hyker-riks/master/package.json"
+    }
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git#2e0023141b9e242eee5c566982a25d88536a7bce",
+  "_shasum": "478bfccc91649cad39e9c4f9e1d8c6bd664a3efc",
+  "_shrinkwrap": null,
+  "_spec": "https://github.com/hykersec/cordova-plugin-hyker-riks",
+  "_where": "D:\\hyker\\riks-cordova\\myproject",
+  "author": {
+    "name": "hyker"
+  },
+  "bugs": {
+    "url": "https://github.com/hykersec/cordova-plugin-hyker-riks/issues"
+  },
   "cordova": {
     "id": "io.hyker.riks",
     "platforms": [
@@ -9,15 +67,9 @@
       "ios"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git"
-  },
-  "keywords": [
-    "ecosystem:cordova",
-    "cordova-android",
-    "cordova-ios"
-  ],
+  "dependencies": {},
+  "description": "\n    A plugin integrating HYKER RIKS capabilities.\n  ",
+  "devDependencies": {},
   "engines": [
     {
       "name": "cordova",
@@ -32,10 +84,21 @@
       "version": ">=1.7.1"
     }
   ],
-  "author": "hyker",
+  "gitHead": "2e0023141b9e242eee5c566982a25d88536a7bce",
+  "homepage": "https://github.com/hykersec/cordova-plugin-hyker-riks#readme",
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
   "license": "see attached licecne file",
-  "bugs": {
-    "url": "https://github.com/hykersec/cordova-plugin-hyker-riks/issues"
+  "name": "cordova-plugin-hyker-riks",
+  "optionalDependencies": {},
+  "readme": "# Cordova Plugin: HYKER RIKS\r\n\r\n## How To Use In Project\r\n\r\n    npm install -g cordova\r\n\r\n    cordova create myprj com.example.myprj MyPrj\r\n\r\n    cd myprj\r\n\r\n    cordova platform add ios\r\n    cordova platform add android@6.2.2\r\n\r\n    cordova plugin add cordova-plugin-add-swift-support --save\r\n    #cordova plugin add cordova-plugin-cocoapod-support --save\r\n\r\n    cordova plugin remove io.hyker.riks\r\n    cordova plugin add https://github.com/hykersec/cordova-plugin-hyker-riks\r\n\r\n    #open platforms/ios/MyPrj.xcworkspace\r\n      #* COPY RiksKitiOS.framework and libriks.so to MyPrj root *\r\n      #HelloCordova > HelloCordova > Build Phases > Copy Files > Destination = Frameworks, name = [ RiksKitiOS.framework, libriks.dylib ]\r\n\r\n    cordova run ios\r\n    cordova run android \r\n\r\n## Example Application\r\n    //this application registers a rikskit and send an encrypted message to itself\r\n     onDeviceReady: function() {\r\n\r\n\tvar button = document.querySelector('button')\r\n\r\n        var cb = function(str){\r\n\t    console.log(\"cb: \" + str);\r\n            alert(str);\r\n        }\r\n\r\n        addEvent(button, 'click', function () {\r\n\r\n\t    var uid = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 11);\r\n\r\n\t    //function for filtering key requests\r\n\t    var allowedForKey = function(uid, namespace, keyID){\r\n\t\t//allow all keys\r\n\t\treturn true;\r\n\t    }\r\n\r\n\t    //function notified when a new key is added\r\n\t    var newKey= function(){}\r\n\r\n\t    //initialize the RiksKit, and register pubkey online\r\n            var rikskit = new RiksKit(uid, \"password\", allowedForKey, newKey);\r\n\r\n\t    var decrypt = function(str){\r\n            \talert(\"Encrypted:\" + str);\r\n\t        rikskit.decrypt(str).then(cb).then(rikskit.rekey(\"topiclol\")).catch(cb);\r\n\t    }\r\n\r\n            rikskit.encrypt(\"loolmsg\", \"topiclol\").then(decrypt).catch(cb);\r\n\r\n\r\n        })\r\n\r\n    }\r\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hykersec/cordova-plugin-hyker-riks.git"
   },
-  "homepage": "https://github.com/hykersec/cordova-plugin-hyker-riks#readme"
+  "version": "1.0.3"
 }

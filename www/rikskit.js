@@ -1,114 +1,110 @@
-cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
-    var backlog = [];
-    var initialized = false;
-    
-    var ensureInitialized = function (f) { 
-        initialized ? f() : backlog.push(f)
+cordova.define("io.hyker.riks.RiksKit", (require, exports, module) => {
+  var callbacks = [];
+  var initialized = false;
+  
+  var ensureInitialized = (callback) => { 
+    initialized ? callback() : callbacks.push(callback)
+  }
+
+  var reallyDone = () => {
+    initialized = true;
+    for (var i = 0; i < callbacks.length; i++) {
+      callbacks[i]();
+    }
+  }
+  
+  function RiksKit(uid, password, allowedForKey, newKey, config) {
+    if (typeof uid !== 'string') throw 'uid must be a string'
+    if (typeof password !== 'string') throw 'password must be a string'
+    if (typeof allowedForKey !== 'function') throw 'allowedForKey must be a function'
+    if (typeof newKey !== 'function') throw 'newKey must be a function'
+    if (typeof config !== 'string' && typeof config !== 'object') throw 'config must be a filename or an object'
+
+    this.uid = uid;
+    this.password = password;
+    this.allowedForKey = allowedForKey;
+    this.newKey = newKey;
+    this.config = config;
+
+    var onError = (error) => {
+      throw new Error(err);
     }
 
-    var reallyDone = function () {
-        for (var i = 0; i < backlog.length; i++) {
-    	backlog[i]();
-        }
-    	initialized = true;
-    }
-    
-    function RiksKit (deviceID, password, allowedForKey, newKey) {
-        console.log("RIKSKIT init");
-        if (typeof allowedForKey !== 'function') throw 'allowedForKey must be a function'
-        if (typeof newKey !== 'function') throw 'newKey must be a function'
-    
-        this.deviceID = '#' + deviceID;
-        this.configPath = "www/development.conf";
-        this.password = password;
-        this.newKey = newKey;
-        this.allowedForKey = allowedForKey;
-
-        var onErr = function (err) {
-            throw new Error(err);
-        }
-
-	cordova.exec(this.msgParse.bind(this), onErr, "CordovaRiksKit", "init", [this.deviceID, this.configPath, this.password]);
-
-    }
-    
-    
-    RiksKit.prototype.msgParse = function(msg){
-        console.log("RIKSKIT msgParse");
-        var json = JSON.parse(msg);
-        var operation = json.operation;
-    
-        switch(operation) {
-    	case "INIT":
-    	    reallyDone();
-    	    break;
-    	case "NEW_KEY":
-    	    break;
-    	case "ALLOWED":
-    	    var uid = json.uid;
-    	    var namespace = json.namespace;
-    	    var keyid = json.keyid;
-    
-    	    var boolAllow = this.allowedForKey(uid, namespace, keyid);
-    	    var allow = boolAllow ? "true" : "false";
-    
-    	    cordova.exec("", "", "CordovaRiksKit", "keyconf", [uid, namespace, keyid,allow]);
-    	    break;
-    	default:
-    	    throw new Error(err);
-    	    break;
-        }
-    }
-    
-    RiksKit.prototype.encrypt = function (data, namespace) {
-	
-    
-        return new Promise(function (resolve, reject) {
-    
-    		ensureInitialized(function () {
-    
-        	    cordova.exec(resolve, reject, "CordovaRiksKit", "encrypt", [data,namespace]);
-    		})
-    
-        })
-
-    }
-    
-    RiksKit.prototype.decrypt = function (data) {
-	console.log("decryptiiiiiiiiiiiiiing: " + data);
-        return new Promise((resolve, reject) => { 
-    	    ensureInitialized(function () { 
-    	        cordova.exec(resolve, reject, "CordovaRiksKit", "decrypt", [data]);
-    	    })
-        })
-    }
-    
-    RiksKit.prototype.preshare = function (recipientUID, keyID) {
-        return new Promise((resolve, reject) => {
-    
-    	ensureInitialized(function () {
-    	    cordova.exec(resolve, reject, "CordovaRiksKit", "preshare", [recipientUID, keyID]);
-    	})
-    
-        })
-    }
-    
-    RiksKit.prototype.rekey = function (namespace) {
-        return new Promise((resolve, reject) => {
-    
-    	ensureInitialized(function () {
-    	    cordova.exec(resolve, reject, "CordovaRiksKit", "rekey", [namespace]);
-    	})
-        })
-    }
-    
-    RiksKit.prototype.resetReplayProtector = function () {
-        return new Promise((resolve, reject) => {
-    	ensureInitialized(function () {
-    	    cordova.exec(resolve, reject, "CordovaRiksKit", "resetall", []);
-            })
-        })
-    }
-    
-    module.exports = RiksKit;
+    cordova.exec(this.messageParse.bind(this), onError, "CordovaRiksKit", "init", [this.uid, this.password, this.config]);
+  }
+  
+  RiksKit.prototype.messageParse = (json) => {
+      var message = JSON.parse(json);
+  
+      switch (message.operation) {
+        case "INIT":
+          reallyDone();
+          break;
+        case "NEW_KEY":
+          break;
+        case "ALLOWED":
+          var arguments = [
+            message.uid,
+            message.keySpace,
+            message.keyID,
+            allow,
+            this.allowedForKey(message.uid, message.keySpace, message.keyID) ? "true" : "false"
+          ];
+  
+          cordova.exec("", "", "CordovaRiksKit", "resolveWhitelist", arguments);
+          break;
+        default:
+          throw new Error(err);
+      }
+  }
+  
+  RiksKit.prototype.encrypt = (data, keySpace) => {
+    return new Promise((resolve, reject) => {
+      ensureInitialized(() => {
+        cordova.exec(resolve, reject, "CordovaRiksKit", "encrypt", [data, keySpace]);
+      })
+    })
+  }
+  
+  RiksKit.prototype.decrypt = (data) => {
+    return new Promise((resolve, reject) => { 
+      ensureInitialized(() => { 
+        cordova.exec(resolve, reject, "CordovaRiksKit", "decrypt", [data]);
+      })
+    })
+  }
+  
+  RiksKit.prototype.preshare = (recipientUID, keyID) => {
+    return new Promise((resolve, reject) => {
+      ensureInitialized(() => {
+        cordova.exec(resolve, reject, "CordovaRiksKit", "preshare", [recipientUID, keyID]);
+      })
+    })
+  }
+  
+  RiksKit.prototype.preshareKeyspace = (recipientUID, keyID) => {
+    return new Promise((resolve, reject) => {
+      ensureInitialized(() => {
+        cordova.exec(resolve, reject, "CordovaRiksKit", "preshareKeyspace", [recipientUID, keyID]);
+      })
+    })
+  }
+  
+  RiksKit.prototype.rekey = (keySpace) => {
+    return new Promise((resolve, reject) => {
+      ensureInitialized(() => {
+        cordova.exec(resolve, reject, "CordovaRiksKit", "rekey", [keySpace]);
+      })
+    })
+  }
+  
+  RiksKit.prototype.resetReplayProtector = () => {
+    return new Promise((resolve, reject) => {
+      ensureInitialized(() => {
+        cordova.exec(resolve, reject, "CordovaRiksKit", "resetReplayProtector", []);
+      })
+    })
+  }
+  
+  module.exports = RiksKit;
 })
