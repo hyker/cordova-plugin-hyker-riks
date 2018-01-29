@@ -45,12 +45,12 @@
             var data = "Hello world";
             var keySpace = "Planet Earth";
             
-            console.log("Encrypting: " + encryptedData);
+            console.log("Encrypting: " + data);
             rikskit.encrypt(data, keySpace).then((encryptedData) => {
                 console.log("Encrypted: " + encryptedData);
                 rikskit.decrypt(encryptedData).then((decryptedData) => {
                     console.log("Decrypted: " + decryptedData);
-                }.catch(console.error);
+                }).catch(console.error);
             }).catch(console.error);
         });
         
