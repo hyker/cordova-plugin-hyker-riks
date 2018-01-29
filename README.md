@@ -29,7 +29,7 @@
 ## How to use
 
 ```javascript
-     onDeviceReady: function() {
+    onDeviceReady: function() {
         addEvent(document.querySelector('button'), 'click', () => {
             var uid = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 11);
             var password = "password";
