@@ -1,4 +1,4 @@
-cordova.define("io.hyker.riks.RiksKit", (require, exports, module) => {
+cordova.define("io.hyker.riks.RiksKit", function(require, exports, module) {
   var callbacks = [];
   var initialized = false;
   
@@ -106,4 +106,4 @@ cordova.define("io.hyker.riks.RiksKit", (require, exports, module) => {
   }
   
   module.exports = RiksKit;
-})
+});
