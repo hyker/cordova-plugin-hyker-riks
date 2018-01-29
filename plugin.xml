@@ -32,7 +32,7 @@
 
     <!-- dependencies -->
     <framework src="src/android/riks.gradle" custom="true" type="gradleReference"/>
-    <resource-file src="src/android/libs/riks.aar" target="libs/riks.aar"/>
+    <lib-file src="src/android/libs/riks.aar"/>
 
     <!-- configuration -->
     <config-file target="AndroidManifest.xml" parent="/manifest">
