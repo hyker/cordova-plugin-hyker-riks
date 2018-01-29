@@ -3,8 +3,9 @@ package io.hyker.plugin;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
-import java.io.IOException;
 import java.util.function.Consumer;
+import java.io.File;
+import java.io.IOException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
