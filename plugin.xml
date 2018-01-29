@@ -35,7 +35,7 @@
     <lib-file src="src/android/libs/prov-1.58.0.0.jar"/>
     <lib-file src="src/android/libs/gson-2.8.2.jar"/>
     <lib-file src="src/android/libs/slf4j-simple-1.7.12.jar"/>
-    <lib-file src="src/android/libs/riks.aar"/>
+    <lib-file src="src/android/libs/riks.jar"/>
 
     <source-file src="src/android/CordovaRiksKit.java" target-dir="src/io/hyker/plugin/"/>
   </platform>
