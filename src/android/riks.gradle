@@ -1,0 +1,22 @@
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {    
+    compile(name:'riks', ext:'aar')
+    compile 'com.madgag.spongycastle:bcpkix-jdk15on:1.58.0.0'
+    compile 'com.madgag.spongycastle:core:1.58.0.0'
+    compile 'com.madgag.spongycastle:prov:1.58.0.0'
+    compile 'org.slf4j:slf4j-simple:1.7.12'
+    compile 'com.google.code.gson:gson:2.8.2'
+}
+
+android {
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}

@@ -3,11 +3,8 @@
         id="io.hyker.riks"
         version="1.0.2">
 
-  <name>HYKER RIKS</name>
-
-  <description>
-    A plugin integrating HYKER RIKS capabilities.
-  </description>
+  <name>Riks</name>
+  <description>A plugin integrating Hyker Riks capabilities.</description>
 
   <!---  <dependency id="cordova-plugin-cocoapod-support"/> -->
 
@@ -30,14 +27,17 @@
       </feature>
     </config-file>
 
-    <lib-file src="src/android/libs/bcpkix-jdk15on-1.58.0.0.jar"/>
-    <lib-file src="src/android/libs/core-1.58.0.0.jar"/>
-    <lib-file src="src/android/libs/prov-1.58.0.0.jar"/>
-    <lib-file src="src/android/libs/gson-2.8.2.jar"/>
-    <lib-file src="src/android/libs/slf4j-simple-1.7.12.jar"/>
-    <lib-file src="src/android/libs/riks.jar"/>
-
+    <!-- sources -->
     <source-file src="src/android/CordovaRiksKit.java" target-dir="src/io/hyker/plugin/"/>
+
+    <!-- dependencies -->
+    <framework src="src/android/riks.gradle" custom="true" type="gradleReference"/>
+    <resource-file src="src/android/libs/riks.aar" target="libs/riks.aar"/>
+
+    <!-- configuration -->
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+        <uses-permission android:name="android.permission.INTERNET"/>
+    </config-file>
   </platform>
 
   <platform name="ios">
@@ -52,7 +52,7 @@
             <!-- optionally add private spec sources -->
             <!--<source url="git@github.com:foo/foo-specs.git"/>-->
         </pods-config>
-        <pod name="OpenSSL" version="~> 1.0.2" />
   </platform>
 
+  <info>Riks installed successfully.</info>
 </plugin>
