@@ -165,7 +165,7 @@ public class CordovaRiksKit extends CordovaPlugin {
 
     private void initRiksKit(String uid, String password, JSONObject config) throws IOException {
         try {
-            Storage storage = new FileStorage(this.cordova.getActivity().getFilesDir());
+            Storage storage = new FileStorage(new File(this.cordova.getActivity().getFilesDir(), uid));
             RiksKit riksKit = new RiksKit(uid, password, initWhitelist(), Json.parse(config.toString()), storage);
 
             synchronized (atomicRiksKit) {
