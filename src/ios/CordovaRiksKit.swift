@@ -19,8 +19,6 @@ import RiksKit
     
     func sendCallbackAndKeepRef(message: String) {
         
-        print("sendCallbackAndKeepRef: " + longTermCallbackId!)
-        
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
             messageAs: message
@@ -37,7 +35,7 @@ import RiksKit
     @objc(init:)
     func init_(command: CDVInvokedUrlCommand) {
         
-        print("init!!")
+        pending = [String: ((Bool) -> Void)]()
         
         if (riksKit != nil) {
             self.commandDelegate!.send(CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Cannot instantiate twice."), callbackId: command.callbackId)
@@ -53,23 +51,15 @@ import RiksKit
                 let url = NSURL(fileURLWithPath: lib).appendingPathComponent(path)
                 
                 config["storage_path"] = url?.path
-                
-                print(url?.path)
             }
     
-            //let config = [String: Any]()
-            
-            let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
-            
-            print("Hello, World: " + path)
-    
             riksKit = RiksKit(uid: uid, password: password,
-                              allowedForKey: { (id: String, ns: String, keyId: String, callback: ((Bool) -> Void)) -> Void in
+                              allowedForKey: { (id: String, ns: String, keyId: String, callback: @escaping ((Bool) -> Void)) -> Void in
 
-                                //self.pending[id + ns + keyId] = callback
+                                self.pending[id + ns + keyId] = callback
                                 
                                 self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"uid\": \"%@\", \"keySpace\": \"%@\", \"keyID\": \"%@\"}", "ALLOWED", id, ns, keyId))
-            },
+                                },
                               newKey: { (id: String, ns: String) -> Void in
                                 self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"keyID\": \"%@\"}", "NEW_KEY", id))
             }, config: config)
@@ -178,5 +168,6 @@ import RiksKit
         self.commandDelegate!.send(CDVPluginResult(status: CDVCommandStatus_OK), callbackId: command.callbackId)
     }
 }
+
 
 
