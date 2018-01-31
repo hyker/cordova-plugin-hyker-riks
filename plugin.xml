@@ -42,16 +42,16 @@
 
   <platform name="ios">
     <config-file target="config.xml" parent="/*">
-      <feature name="RiksKit">
-        <param name="ios-package" value="RiksKit" />
+      <feature name="CordovaRiksKit">
+        <param name="ios-package" value="CordovaRiksKit" />
       </feature>
     </config-file>
 
-    <source-file src="src/ios/RiksKit.swift"/>
-        <pods-config ios-min-version="8.0" use-frameworks="true">
-            <!-- optionally add private spec sources -->
-            <!--<source url="git@github.com:foo/foo-specs.git"/>-->
-        </pods-config>
+    <source-file src="src/ios/CordovaRiksKit.swift"/>
+    <pods-config ios-min-version="8.0" use-frameworks="true">
+        <!-- optionally add private spec sources -->
+        <!--<source url="git@github.com:foo/foo-specs.git"/>-->
+    </pods-config>
   </platform>
 
   <info>Riks installed successfully.</info>
