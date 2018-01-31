@@ -17,6 +17,8 @@ import RiksIOS
     
     func sendCallbackAndKeepRef(message: String) {
         
+        print("sendCallbackAndKeepRef: " + longTermCallbackId!)
+        
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
             messageAs: message
@@ -33,23 +35,45 @@ import RiksIOS
     @objc(init:)
     func init_(command: CDVInvokedUrlCommand) {
         
+        print("init!!")
+        
         if (riksKit != nil) {
             self.commandDelegate!.send(CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: "Cannot instantiate twice."), callbackId: command.callbackId)
         } else {
+            
+            let uid = command.arguments[0] as! String
+            let password = command.arguments[1] as! String
+            var config = command.arguments[2] as! [String: Any]
+            
+            if let path = config["storage_path"] as? String {
+                
+                let lib = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
+                let url = NSURL(fileURLWithPath: lib).appendingPathComponent(path)
+                
+                config["storage_path"] = url?.path
+                
+                print(url?.path)
+            }
     
-            let config = [String: Any]()
+            //let config = [String: Any]()
+            
+            let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
+            
+            print("Hello, World: " + path)
     
-            riksKit = RiksKit(uid: "id", password: "password",
-                              allowedForKey: { (id: String, ns: String, keyId: String, callback: @escaping ((Bool) -> Void)) -> Void in
+            /*
+            riksKit = RiksKit(uid: uid, password: password,
+                              allowedForKey: { (id: String, ns: String, keyId: String, callback: ((Bool) -> Void)) -> Void in
 
-                                self.pending[id + ns + keyId] = callback
+                                //self.pending[id + ns + keyId] = callback
                                 
                                 self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"uid\": \"%@\", \"keySpace\": \"%@\", \"keyID\": \"%@\"}", self.OPERATION_ALLOWED, id, ns, keyId))
-                                } as! (String, String, String, ((Bool) -> Void)) -> Void,
+            },
                               newKey: { (id: String, ns: String) -> Void in
                                 self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"keyID\": \"%@\"}", self.OPERATION_NEW_KEY, id))
             }, config: config)
-        
+ 
+            */
             longTermCallbackId = command.callbackId
             sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\"}", OPERATION_INIT))
         }
@@ -154,4 +178,5 @@ import RiksIOS
         self.commandDelegate!.send(CDVPluginResult(status: CDVCommandStatus_OK), callbackId: command.callbackId)
     }
 }
+
 

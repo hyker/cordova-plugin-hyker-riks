@@ -26,7 +26,7 @@ function RiksKit(uid, password, allowedForKey, newKey, config) {
   this.config = config;
 
   var onError = (error) => {
-    throw new Error(err);
+    throw new Error(error);
   }
 
   cordova.exec(this.messageParse.bind(this), onError, "CordovaRiksKit", "init", [this.uid, this.password, this.config]);
@@ -52,7 +52,7 @@ RiksKit.prototype.messageParse = (json) => {
         cordova.exec("", "", "CordovaRiksKit", "resolveWhitelist", arguments);
         break;
       default:
-        throw new Error(err);
+        throw new Error('unknown response');
     }
 }
 
