@@ -1,10 +1,12 @@
 import RiksKit
 
 @objc(CordovaRiksKit) class CordovaRiksKit : CDVPlugin {
-    
+
+    /*
     var OPERATION_INIT = "INIT"
     var OPERATION_NEW_KEY = "NEW_KEY"
     var OPERATION_ALLOWED = "ALLOWED"
+    */
     
     var longTermCallbackId: String?
     var riksKit: RiksKit?
@@ -67,15 +69,15 @@ import RiksKit
 
                                 //self.pending[id + ns + keyId] = callback
                                 
-                                self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"uid\": \"%@\", \"keySpace\": \"%@\", \"keyID\": \"%@\"}", self.OPERATION_ALLOWED, id, ns, keyId))
+                                self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"uid\": \"%@\", \"keySpace\": \"%@\", \"keyID\": \"%@\"}", "ALLOWED", id, ns, keyId))
             },
                               newKey: { (id: String, ns: String) -> Void in
-                                self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"keyID\": \"%@\"}", self.OPERATION_NEW_KEY, id))
+                                self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"keyID\": \"%@\"}", "NEW_KEY", id))
             }, config: config)
  
             */
             longTermCallbackId = command.callbackId
-            sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\"}", OPERATION_INIT))
+            sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\"}", "INIT"))
         }
     }
     
