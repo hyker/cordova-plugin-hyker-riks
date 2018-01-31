@@ -49,7 +49,7 @@ RiksKit.prototype.messageParse = function (json) {
           this.allowedForKey(message.uid, message.keySpace, message.keyID) ? "true" : "false"
         ];
 
-        cordova.exec("", "", "CordovaRiksKit", "resolveWhitelist", arguments);
+        cordova.exec(null, null, "CordovaRiksKit", "resolveWhitelist", [ ...arguments ]);
         break;
       default:
         throw new Error("unknown response: " + message.operation + " in json: " + json);
