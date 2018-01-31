@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="io.hyker.riks"
-        version="1.0.2">
+        id="cordova-plugin-hyker-riks"
+        version="3.0.0">
 
   <name>Riks</name>
   <description>A plugin integrating Hyker Riks capabilities.</description>

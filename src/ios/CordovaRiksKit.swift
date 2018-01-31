@@ -1,4 +1,4 @@
-import RiksIOS
+import RiksKit
 
 @objc(CordovaRiksKit) class CordovaRiksKit : CDVPlugin {
     
