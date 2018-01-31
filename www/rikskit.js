@@ -32,7 +32,7 @@ function RiksKit(uid, password, allowedForKey, newKey, config) {
   cordova.exec(this.messageParse.bind(this), onError, "CordovaRiksKit", "init", [this.uid, this.password, this.config]);
 }
 
-RiksKit.prototype.messageParse = (json) => {
+RiksKit.prototype.messageParse = function (json) {
     var message = JSON.parse(json);
 
     switch (message.operation) {
@@ -56,7 +56,7 @@ RiksKit.prototype.messageParse = (json) => {
     }
 }
 
-RiksKit.prototype.encrypt = (data, keySpace) => {
+RiksKit.prototype.encrypt = function (data, keySpace) {
   return new Promise((resolve, reject) => {
     ensureInitialized(() => {
       cordova.exec(resolve, reject, "CordovaRiksKit", "encrypt", [data, keySpace]);
@@ -64,7 +64,7 @@ RiksKit.prototype.encrypt = (data, keySpace) => {
   })
 }
 
-RiksKit.prototype.decrypt = (data) => {
+RiksKit.prototype.decrypt = function (data) {
   return new Promise((resolve, reject) => { 
     ensureInitialized(() => { 
       cordova.exec(resolve, reject, "CordovaRiksKit", "decrypt", [data]);
@@ -72,7 +72,7 @@ RiksKit.prototype.decrypt = (data) => {
   })
 }
 
-RiksKit.prototype.preshare = (recipientUID, keyID) => {
+RiksKit.prototype.preshare = function (recipientUID, keyID) {
   return new Promise((resolve, reject) => {
     ensureInitialized(() => {
       cordova.exec(resolve, reject, "CordovaRiksKit", "preshare", [recipientUID, keyID]);
@@ -80,7 +80,7 @@ RiksKit.prototype.preshare = (recipientUID, keyID) => {
   })
 }
 
-RiksKit.prototype.preshareKeyspace = (recipientUID, keySpace) => {
+RiksKit.prototype.preshareKeyspace = function (recipientUID, keySpace) {
   return new Promise((resolve, reject) => {
     ensureInitialized(() => {
       cordova.exec(resolve, reject, "CordovaRiksKit", "preshareKeyspace", [recipientUID, keySpace]);
@@ -88,7 +88,7 @@ RiksKit.prototype.preshareKeyspace = (recipientUID, keySpace) => {
   })
 }
 
-RiksKit.prototype.rekey = (keySpace) => {
+RiksKit.prototype.rekey = function (keySpace) {
   return new Promise((resolve, reject) => {
     ensureInitialized(() => {
       cordova.exec(resolve, reject, "CordovaRiksKit", "rekey", [keySpace]);
@@ -96,7 +96,7 @@ RiksKit.prototype.rekey = (keySpace) => {
   })
 }
 
-RiksKit.prototype.resetReplayProtector = () => {
+RiksKit.prototype.resetReplayProtector = function () {
   return new Promise((resolve, reject) => {
     ensureInitialized(() => {
       cordova.exec(resolve, reject, "CordovaRiksKit", "resetReplayProtector", []);

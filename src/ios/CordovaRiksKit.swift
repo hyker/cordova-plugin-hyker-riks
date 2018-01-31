@@ -63,7 +63,6 @@ import RiksKit
             
             print("Hello, World: " + path)
     
-            /*
             riksKit = RiksKit(uid: uid, password: password,
                               allowedForKey: { (id: String, ns: String, keyId: String, callback: ((Bool) -> Void)) -> Void in
 
@@ -75,7 +74,6 @@ import RiksKit
                                 self.sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\", \"keyID\": \"%@\"}", "NEW_KEY", id))
             }, config: config)
  
-            */
             longTermCallbackId = command.callbackId
             sendCallbackAndKeepRef(message: String(format: "{\"operation\": \"%@\"}", "INIT"))
         }
