@@ -2,27 +2,27 @@
 
 ## Creating sample Cordova application
 
-```
-    npm install -g cordova
+```bash
+npm install -g cordova
 
-    cordova create myprj com.example.myprj MyPrj
+cordova create myprj com.example.myprj MyPrj
 
-    cd myprj
+cd myprj
 
-    cordova platform add ios
-    cordova platform add android
+cordova platform add ios
+cordova platform add android
 
-    cordova plugin add cordova-plugin-add-swift-support --save
+cordova plugin add cordova-plugin-add-swift-support --save
 
-    cordova plugin remove cordova-plugin-hyker-riks
-    cordova plugin add https://github.com/hykersec/cordova-plugin-hyker-riks
+cordova plugin remove cordova-plugin-hyker-riks
+cordova plugin add https://github.com/hykersec/cordova-plugin-hyker-riks
 
-    open platforms/ios/MyPrj.xcworkspace
-    COPY RiksKit.framework and libriks.dylib to MyPrj root
-    Add the framework and dylib to "Embedded Binaries"
+open platforms/ios/MyPrj.xcworkspace
+COPY RiksKit.framework and libriks.dylib to MyPrj root
+Add the framework and dylib to "Embedded Binaries"
     
-    cordova run ios
-    cordova run android
+cordova run ios
+cordova run android
 ```
 
 ## How to use
