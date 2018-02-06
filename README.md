@@ -157,7 +157,7 @@ app.initialize();
 ```
 
 #### Communication server
-```
+```js
 // yarn init
 // yarn add ws
 async function main() {
