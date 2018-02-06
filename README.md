@@ -57,6 +57,8 @@
     }
 ```
 
+### Device 2 device
+
 ```javascript
 var LOCAL = false
 
@@ -152,4 +154,35 @@ var app = {
 
 app.initialize();
 
+```
+
+#### Communication server
+```
+// yarn init
+// yarn add ws
+async function main() {
+  const WebSocket = require('ws')
+  const wss = new WebSocket.Server({ host: '0.0.0.0', port: 1337 })
+  var first = null
+  var second = null
+  wss.on('connection', function connection(ws) {
+    console.log('connect!')
+    if (!first) {
+      first = ws
+      ws.on('message', msg => {
+        console.log(+new Date + ' 1')
+        if (second)
+          second.send(msg)
+      })
+    } else {
+      second = ws
+      ws.on('message', msg => {
+        console.log(+new Date + ' 2')
+        if (first)
+          first.send(msg)
+      })
+    }
+  })
+}
+main().catch(e => console.log(e))
 ```
